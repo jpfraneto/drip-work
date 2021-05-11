@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/userPage.css">
+    <title>Drip Work - <%=currentUser.username%></title>
+</head>
+<body>
+    <h1>This is the page of <%=currentUser.username%>, who has drip worked for <%=userInfo.elapsedTimeWorking/1000%> seconds. The average score for them is <%=averageRating%></h1>
+    <table>
+        <thead>
+            <tr>
+                <td>Index</td>
+                <td>Date</td>
+                <td>Target Duration (seconds)</td>
+                <td>Mission</td>
+                <td>Completion Rating</td>
+                <td>Comments of this Session</td>
+            </tr>
+        </thead>
+        <tbody>
+            <% userInfo.workSessions.reverse().forEach((session) => {%>
+                <tr>
+                    <td><%= session.index %></td>
+                    <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
+                    <td><%= session.targetDuration / 1000%></td>
+                    <td><%= session.mission %></td>
+                    <td><%= session.rating %></td>
+                    <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionComments(this)'>Comments</span></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+    <a href="/">Landing Page</a>
+
+    <script src='/scripts/userScript.js'></script>
+</body>
+</html>

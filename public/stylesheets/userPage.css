@@ -1,0 +1,38 @@
+body {
+    background-color:rgb(122, 158, 126);
+    text-align: center;
+}
+
+table {
+    margin: 0 8%;
+    width: 84%;
+    margin-bottom: 8px;
+}
+
+table td {
+    border: solid 1px black;
+}
+
+a {
+    margin: 0 auto;
+    display: block;
+    width: 115px;
+    height: 25px;
+    background:rgb(179, 239, 178);
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: black;
+    font-weight: bold;
+    line-height: 25px;
+}
+
+thead {
+    font-weight: bold;
+    text-align: center;
+}
+
+.commentsSpan {
+    color: blue;
+    cursor: pointer;
+}

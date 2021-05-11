@@ -1,0 +1,81 @@
+body {
+    background-color: rgb(122, 158, 126);
+}
+
+#pauseSessionBtn {
+    display: none;
+}
+
+#sessionDiv {
+    margin: 0 auto;
+    border: solid black 2px;
+    background-color: rgb(179, 239, 178);
+    padding: 3px;
+    display: inline-block;
+    text-align: center;
+}
+
+input {
+    width: 88px;
+}
+
+#clockDiv {
+    display: none;
+}
+
+#clockDiv p {
+    margin: 2px 0;
+}
+
+#sessionResults {
+    display: none;
+}
+
+.authForm {
+    border: solid black 2px;
+    background-color: rgb(179, 239, 178);
+    padding: 3px;
+    display: inline-block;
+    text-align: right;
+}
+
+.sessionObjectives {
+    background-color: rgb(179, 239, 178);
+    border: black 2px dotted;
+}
+
+#closeSession {
+    display: none;
+}
+
+.topNavbar {
+    overflow: hidden;
+    background-color: rgb(179, 239, 178);
+    margin-bottom: 8px;
+    padding: 0;
+    text-align: center;
+}
+
+.bottomNavbar {
+    overflow: hidden;
+    background-color: rgb(179, 239, 178);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.bottomNavbar a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 0 33px;
+  text-decoration: none;
+  font-size: 33px;
+}
+
+.bottomNavbar a:hover{
+    font-weight: bold;
+  }
+

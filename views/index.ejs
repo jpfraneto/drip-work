@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <title>Drip Work App</title>
+</head>
+<body>
+    <div class="topNavbar">
+        <h1>Drip Work</h1>
+    </div>
+    <audio hidden id='finishAudio'>
+    <source src="/audio/ping.mp3" type='audio/mpeg'></audio>
+    <div id="sessionDiv">
+        <div id="welcomeDiv">
+            <p>Welcome, it is time to open the faucet.</p>
+        </div>
+        <div id="clockDiv">
+            <h1 id='clock'></h1>
+            <div class="sessionObjectives">
+                <p><strong>The objective for this session is:</strong></p>
+                <p id='sessionObjectives'></p>
+            </div>
+            <hr>
+            <p>Go for it! This music will help you:</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/YY-otpFaJ-w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>    
+        </div>
+        <div id="closeSession">
+            <p><strong>The session is over! Here you can close it:</strong></p>
+            <form id='sessionResultsForm' method="POST" action="/endSession">
+                <label for="feelingRating">Feeling Rating (From 0 to 100)</label>
+                <input id='feelingRating' name='feelingRating' type="number" min="0" max="100"><br>
+                <label for="sessionComments">Comments</label><br>
+                <textarea name="sessionComments" id="sessionComments" cols="30" rows="10"></textarea><br>
+                <button type="submit">Close Session!</button>
+            </form>
+        </div>
+        <div id="sessionResults">
+            <h1>Session Results</h1>
+            <p><span id='resultsMessage'></span></p>
+            <% if(currentUser){ %>
+                <a href="/users/<%=currentUser.username%>">Profile</a>
+            <% } %>
+            <a href="/">Landing Page</a>
+        </div>
+        <form action="" id='timePicker'>
+            <p><strong>Start a new session:</strong></p>
+            <input type="number" placeholder="hr" name='hours'>
+            <input type="number" placeholder="min" name='minutes'>
+            <input type="number" placeholder="sec" name='seconds'><br>
+            <textarea name="mission" placeholder='Session Mission' id="missionInput" cols="30" rows="10"></textarea>
+            <br><br>
+            <button id='startSessionBtn'>Start Session</button><br>
+        </form>
+        <button id='pauseSessionBtn'>Pause</button><br>
+    </div>
+    <br>
+
+<div class="bottomNavbar">
+    <% if(!currentUser){ %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    <% } else { %>
+        <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
+        <a href="/logout">Logout</a>
+    <% } %>
+</div>
+
+    <script src='scripts/script.js'></script>
+</body>
+</html>
