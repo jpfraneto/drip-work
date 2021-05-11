@@ -98,7 +98,8 @@ app.get('/users/:username', async (req, res) => {
         User.findOne({username:req.user.username}).populate('workSessions')
         .then((thisUser) => {
             if(req.params.username === req.user.username){
-                var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
+                var averageRating = thisUser.workSessions.filter(val => val>0).reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
+                console.log(averageRating);
                 res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
             } else {
                 res.redirect('/login');

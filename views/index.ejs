@@ -13,12 +13,39 @@
     </div>
     <audio hidden id='finishAudio'>
     <source src="/audio/ping.mp3" type='audio/mpeg'></audio>
-    <div id="sessionDiv">
-        <div id="welcomeDiv">
+    
+    <div id="sessionContainer">
+        <div class='innerDiv' id='sessionCreation'>
             <p>Welcome, it is time to open the faucet.</p>
+            <form action="" id='timePicker'>
+                <div class="timerDiv">
+                    <div id="timeInputs">
+                        <label for="hoursInput">Hours:</label>
+                        <input id='hoursInput' type="number" placeholder="hr" name='hours'>
+                        <label for="minutesInput">Minutes:</label>
+                        <input id='minutesInput' type="number" placeholder="min" name='minutes'>
+                        <label for="secondsInput">Seconds:</label>
+                        <input id='secondsInput' type="number" placeholder="sec" name='seconds'>
+                    </div>
+                    <a id='setTimerBtn' class='funcBtn'>Set Timer</a>
+                    <a id='clearTimerBtn' class='funcBtn'>Clear Timer</a>
+                    <p id='targetTime'>Your session will end at <strong><span id='targetEndingTime'></span></strong></p>
+                </div>
+                <p><strong>Start a new session:</strong></p>
+                <textarea name="mission" placeholder='Session Mission' id="missionInput" cols="30" rows="10"></textarea>
+                <br><br>
+                <button id='startSessionBtn'>Start Session</button><br>
+            </form>
         </div>
-        <div id="clockDiv">
-            <h1 id='clock'></h1>
+
+        <div class='innerDiv' id="sessionRunning">
+            <div class="sessionClockDiv">
+                <h1 id='clock'></h1>
+                <a id='pauseSessionBtn' class='funcBtn'>Pause</a>
+                <a id='resumeSessionBtn' class='funcBtn'>Resume</a>
+                <a id='stopSessionBtn' class='funcBtn'>End Session</a>
+            </div>
+
             <div class="sessionObjectives">
                 <p><strong>The objective for this session is:</strong></p>
                 <p id='sessionObjectives'></p>
@@ -27,17 +54,19 @@
             <p>Go for it! This music will help you:</p>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/YY-otpFaJ-w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>    
         </div>
-        <div id="closeSession">
+
+        <div class='innerDiv' id="sessionClosing">
             <p><strong>The session is over! Here you can close it:</strong></p>
             <form id='sessionResultsForm' method="POST" action="/endSession">
                 <label for="feelingRating">Feeling Rating (From 0 to 100)</label>
                 <input id='feelingRating' name='feelingRating' type="number" min="0" max="100"><br>
-                <label for="sessionComments">Comments</label><br>
-                <textarea name="sessionComments" id="sessionComments" cols="30" rows="10"></textarea><br>
+                <label for="sessionComments">Comments</label>
+                <textarea name="sessionComments" id="sessionComments"></textarea><br>
                 <button type="submit">Close Session!</button>
             </form>
         </div>
-        <div id="sessionResults">
+
+        <div class='innerDiv' id="sessionResults">
             <h1>Session Results</h1>
             <p><span id='resultsMessage'></span></p>
             <% if(currentUser){ %>
@@ -45,16 +74,7 @@
             <% } %>
             <a href="/">Landing Page</a>
         </div>
-        <form action="" id='timePicker'>
-            <p><strong>Start a new session:</strong></p>
-            <input type="number" placeholder="hr" name='hours'>
-            <input type="number" placeholder="min" name='minutes'>
-            <input type="number" placeholder="sec" name='seconds'><br>
-            <textarea name="mission" placeholder='Session Mission' id="missionInput" cols="30" rows="10"></textarea>
-            <br><br>
-            <button id='startSessionBtn'>Start Session</button><br>
-        </form>
-        <button id='pauseSessionBtn'>Pause</button><br>
+
     </div>
     <br>
 
@@ -66,6 +86,7 @@
         <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
         <a href="/logout">Logout</a>
     <% } %>
+    <a id='suggestionsBtn'>Suggestions</a>
 </div>
 
     <script src='scripts/script.js'></script>
