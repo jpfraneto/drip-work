@@ -98,8 +98,7 @@ app.get('/users/:username', async (req, res) => {
         User.findOne({username:req.user.username}).populate('workSessions')
         .then((thisUser) => {
             if(req.params.username === req.user.username){
-                var averageRating = thisUser.workSessions.filter(val => val>0).reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
-                console.log(averageRating);
+                var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
                 res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
             } else {
                 res.redirect('/login');
@@ -110,19 +109,19 @@ app.get('/users/:username', async (req, res) => {
     }
 })
 
-app.post('/newSession', (req, res) => {
+app.post('/startNewSession', (req, res) => {
     User.findOne({username:req.body.username})
     .then((thisUser) => {
         let newSession = new WorkSession({
             index : thisUser.workSessions.length,
             targetDuration : req.body.targetDuration,
-            mission : req.body.mission,
+            missions : req.body.missions,
+            comments : req.body.comments,
             realStartingTimestamp : req.body.startingTimestamp
         });
         newSession.save();
         thisUser.workSessions.push(newSession);
         thisUser.save();
-        console.log('The new session started');
         res.json({sessionID:newSession._id});
     });
 });
@@ -147,12 +146,30 @@ app.post('/endSession', (req, res) => {
 });
 
 app.post('/getSessionComment', (req, res) => {
-    console.log(req.body.sessionID);
     WorkSession.findById(req.body.sessionID).populate('afterStats')
     .then((queriedSession) => {
         console.log(queriedSession);
         res.json({sessionComments : queriedSession.afterStats.comments})
     })
+})
+
+app.post('/getSessionMissions', (req, res) => {
+    console.log(req.body.sessionID);
+    WorkSession.findById(req.body.sessionID)
+    .then((queriedSession) => {
+        res.json({sessionMissions : queriedSession.missions})
+    })
+})
+
+app.get('/schedule', (req, res) => {
+    if(req.user) res.render('schedule');
+    else res.redirect('login');
+})
+
+app.post('/schedule', (req, res) => {
+    console.log(req.body);
+    let newSession = 
+    res.json({123:435});
 })
 
 const port = process.env.PORT || 3000;

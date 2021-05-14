@@ -4,10 +4,11 @@ var Schema = mongoose.Schema;
 
 var WorkSessionSchema = new Schema({
   index : Number,
-  targetStartingTimestamp : Date,
+  scheduledStartingTimestamp : Date,
   realStartingTimestamp : Date,
   targetDuration : Number,
-  mission : String,
+  missions : [String],
+  comments : String,
   rating : Number,
   afterStats : {
       duration : Number,

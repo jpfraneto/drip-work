@@ -13,9 +13,6 @@ body {
     text-align: center;
 }
 
-input {
-    width: 88px;
-}
 
 .authForm {
     border: solid black 2px;
@@ -77,9 +74,10 @@ input {
 textarea {
     margin-top: 8px;
     width: 100%;
+    height: 88px;
 }
 
-#timePicker input {
+#sessionScheduleForm input {
     width: 10%;
     margin: 0 auto;
 }
@@ -151,3 +149,27 @@ textarea {
     border: 1px solid black;
     padding: 8px ;
 }
+
+#editSessionBtn {
+    background-color: coral;
+    display: none;
+}
+
+#submitSessionBtn {
+    background-color: chartreuse;
+    display: none;
+}
+
+#sessionScheduleDiv {
+    text-align: center;
+    border: black 2px solid;
+    margin: 0 auto 8px 0;
+}
+
+#sessionReviewDiv {
+    display: none;
+    text-align: center;
+    border: black 2px solid;
+    margin: 0 auto 8px 0;
+}
+

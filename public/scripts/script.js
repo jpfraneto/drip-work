@@ -1,48 +1,68 @@
-let totalMiliseconds;
-
 window.onload = () => {
+    document.getElementById('addMissionBtn').addEventListener('click', addMission);
     document.getElementById('setTimerBtn').addEventListener('click', setTargetEndingTime)
     document.getElementById('clearTimerBtn').addEventListener('click', clearTimer);
-    document.getElementById('pauseSessionBtn').addEventListener('click', pauseSession);
-    document.getElementById('resumeSessionBtn').addEventListener('click', resumeSession);
-    document.getElementById('stopSessionBtn').addEventListener('click', stopSession);
     document.getElementById('suggestionsBtn').addEventListener('click', ()=>{
       alert('If you have any suggestions on making this place better, email me at jpfraneto@gmail.com. I appreciate it, it benefits us all.')
     })
 
-    document.getElementById('timePicker').addEventListener('submit', (e) => {
+    document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        let formData = getFormData(document.getElementById('timePicker'));
+        let formData = getFormData(document.getElementById('sessionScheduleForm'));
         let hours = formData.hours;
         let minutes = formData.minutes;
-        let seconds = formData.seconds;
-        let mission = formData.mission;
+        let seconds = formData.seconds || "0";
+        var totalMiliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
+        minutes = hours * 60 + minutes;
+        minutes = (minutes < 10 ? "0" : "") + minutes;
+        seconds = (seconds < 10 ? "0" : "") + seconds;
+        console.log(minutes,seconds);
 
-        totalMiliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
-        let now = (new Date()).getTime();
-        let endingTimestamp = totalMiliseconds + now;
+        var missions = [];
+        var missionsUl = document.getElementsByClassName('missionLi');
+        for (var i = 0; i<missionsUl.length ; i++){
+            missions.push(missionsUl[i].innerHTML)
+        }
+
+        let comments = formData.comments;
 
         if (totalMiliseconds > 0) {
+          startSession(missions, comments, totalMiliseconds);
+          document.getElementById('clock').innerHTML = minutes + ":" + seconds;
           document.getElementById('sessionCreation').style.display = 'none';
           document.getElementById('sessionRunning').style.display = 'block';
-          document.getElementById('sessionObjectives').innerText = mission;
-          startSession(mission, totalMiliseconds, now);
         } else alert('Please add the time you want to focus!');
     });
 }
 
-function startSession (mission, totalMiliseconds, now) {
-  runClock(totalMiliseconds+now);
+function startSession (missions, comments, targetDuration) {
+  document.getElementById('sessionComments').innerText = comments;
+
+  missions.forEach((mission)=>{
+    let li = document.createElement('li');
+    li.appendChild(document.createTextNode(mission));
+    document.getElementById('sessionMissionsDisplay').appendChild(li);
+  })
+
+  var timer = startTimer(targetDuration)
+
+  document.getElementById('pauseSessionBtn').addEventListener('click', timer.pause);
+  document.getElementById('resumeSessionBtn').addEventListener('click', timer.resume);
+  document.getElementById('stopSessionBtn').addEventListener('click', () => {
+    stopSession(timer);
+  });
+
   var currentUser = document.getElementById('currentUser').innerText;
-  localStorage.setItem('startingTimestamp', totalMiliseconds+now);
-  localStorage.setItem('sessionDuration', totalMiliseconds);
+
   var query = {
     username : currentUser,
-    targetDuration : totalMiliseconds,
-    mission : mission,
-    startingTimestamp : now
+    targetDuration : targetDuration,
+    missions : missions,
+    comments : comments,
+    startingTimestamp : new Date().getTime()
   };
-  fetch('/newSession', {
+
+  fetch('/startNewSession', {
   method: 'POST', 
   headers: {
     'Content-Type': 'application/json',
@@ -58,40 +78,42 @@ function startSession (mission, totalMiliseconds, now) {
   });
 }
 
-function runClock (endingTimestamp) {
-    let remainingMs = endingTimestamp - (new Date().getTime());
-    const seconds = Math.floor( (remainingMs/1000) % 60 );
-    const minutes = Math.floor( (remainingMs/1000/60) % 60 );
-    const hours = Math.floor( (remainingMs/(1000*60*60)) % 24 );
-    document.getElementById('clock').innerText = (twoDigits(hours) + ':' + twoDigits(minutes) + ':' + twoDigits(seconds));
-    if (remainingMs>888) {
-      setTimeout(runClock, 1000, endingTimestamp);
-    } else {
+function startTimer (ms, container) {
+  var startTime, timer, obj, display = document.getElementById('clock');
+  obj = {};
+  obj.resume = function () {
+    startTime = new Date().getTime();
+    timer = setInterval(obj.step, 500);
+    document.getElementById('pauseSessionBtn').style.display = 'inline-block';
+    document.getElementById('resumeSessionBtn').style.display = 'none';
+    document.getElementById('stopSessionBtn').style.display = 'none';
+  }
+  obj.pause = function () {
+    ms = obj.step();
+    clearInterval(timer);
+    document.getElementById('pauseSessionBtn').style.display = 'none';
+    document.getElementById('resumeSessionBtn').style.display = 'inline-block';
+    document.getElementById('stopSessionBtn').style.display = 'inline-block';
+  }
+  obj.step = function () {
+    var now = Math.max(0, ms-(new Date().getTime() - startTime)),
+    m = Math.floor(now/60000), s= Math.floor(now/1000)%60;
+    m = (m<10 ? "0" : "") + m;
+    s = (s<10 ? "0" : "") + s;
+    display.innerHTML = m + ':' + s ;
+    document.title = ('Drip Work App - ' + m + ':' + s );
+    if (now == 0){
+      clearInterval(timer);
       endSession();
     }
-}
-
-function runClock2 (endingTimestamp) {
-  var intervalId = setInterval(() => {
-    var now = new Date().getTime();
-    var timeleft = endingTimestamp - now;
-    if(timeleft > 0) {
-      const seconds = Math.floor( (timeleft/1000) % 60 );
-      const minutes = Math.floor( (timeleft/1000/60) % 60 );
-      const hours = Math.floor( (timeleft/(1000*60*60)) % 24 );
-      document.getElementById('clock').innerText = (twoDigits(hours) + ':' + twoDigits(minutes) + ':' + twoDigits(seconds));
-    } else {
-      endSession();
-    }
-  }, 1000);
-  localStorage.setItem('intervalID', intervalId);
-}
-
-function twoDigits (n) {
-    return (n<10 ? '0' : '') + n 
+    return now
+  }
+  obj.resume();
+  return obj
 }
 
 function endSession () {
+  console.log('inside the endSession');
   var audio = document.getElementById('finishAudio');
   audio.play();
   document.getElementById('sessionRunning').style.display = 'none';
@@ -101,7 +123,7 @@ function endSession () {
 document.getElementById('sessionResultsForm').addEventListener('submit', (e) => {
   e.preventDefault();
   let sessionID = localStorage.getItem('sessionID');
-  let sessionDuration = localStorage.getItem('sessionDuration');
+  let sessionDuration = 333;
   let formData = getFormData(document.getElementById('sessionResultsForm'));
   var query = {
     sessionDuration : sessionDuration,
@@ -109,6 +131,10 @@ document.getElementById('sessionResultsForm').addEventListener('submit', (e) => 
     comments : formData.sessionComments,
     sessionID : sessionID
   }
+  saveSessionToDB(query);
+})
+
+function saveSessionToDB (query) {
   fetch('/endSession', {
     method: 'POST', 
     headers: {
@@ -118,33 +144,21 @@ document.getElementById('sessionResultsForm').addEventListener('submit', (e) => 
     })
     .then(response => response.json())
     .then(data => {
-      console.log('The session was saved in the DB');
       document.getElementById('resultsMessage').innerText = data.message;
       document.getElementById('sessionClosing').style.display = 'none';
       document.getElementById('sessionResults').style.display = 'block';
+      document.title = ('Drip Work App - Session Complete');
     })
     .catch((error) => {
       console.error('Error:', error);
     });
-})
-
-function pauseSession () {
-  document.getElementById('pauseSessionBtn').style.display = 'none';
-  document.getElementById('resumeSessionBtn').style.display = 'inline-block';
-  document.getElementById('stopSessionBtn').style.display = 'inline-block';
-  alert('The session should be paused');
 }
 
-function resumeSession () {
-  document.getElementById('pauseSessionBtn').style.display = 'inline-block';
-  document.getElementById('resumeSessionBtn').style.display = 'none';
-  document.getElementById('stopSessionBtn').style.display = 'none';
-  alert('The session should be resumed');
-}
-
-function stopSession () {
+function stopSession (timer) {
   if (confirm('Are you sure you want to stop this session?')) {
-    alert('Now the session should be stopped')
+    clearTimeout(timer);
+    endSession();
+    document.title = ('Drip Work App');
   } else {
     alert('You did not confirm')
   }
@@ -162,7 +176,7 @@ function getFormData (form) {
 
 function setTargetEndingTime () {
   document.getElementById('clearTimerBtn').style.display = 'inline-block'
-  let formData = getFormData(document.getElementById('timePicker'));
+  let formData = getFormData(document.getElementById('sessionScheduleForm'));
   let hours = formData.hours;
   let minutes = formData.minutes;
   let seconds = formData.seconds;
@@ -180,4 +194,18 @@ function clearTimer () {
   document.getElementById('hoursInput').value = 0;
   document.getElementById('minutesInput').value = 0;
   document.getElementById('secondsInput').value = 0;
+}
+
+function addMissionTag() {
+  let newMission = document.getElementById('sessionMission').value;
+  let li = document.createElement('li');
+  li.appendChild(document.createTextNode(newMission));
+  li.classList.add('missionLi');
+  document.getElementById('sessionMissions').appendChild(li);
+  document.getElementById('sessionMission').value = "";
+  return newMission
+}
+
+function addMission() {
+  addMissionTag();
 }

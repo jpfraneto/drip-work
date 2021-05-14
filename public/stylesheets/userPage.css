@@ -15,7 +15,7 @@ table td {
 
 a {
     margin: 0 auto;
-    display: block;
+    display: inline-block;
     width: 115px;
     height: 25px;
     background:rgb(179, 239, 178);
@@ -35,4 +35,23 @@ thead {
 .commentsSpan {
     color: blue;
     cursor: pointer;
+}
+
+.bottomNavbar {
+    overflow: hidden;
+    background-color: rgb(179, 239, 178);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.bottomNavbar a {
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 0 33px;
+  text-decoration: none;
+  font-size: 33px;
 }

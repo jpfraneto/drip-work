@@ -16,8 +16,8 @@
     
     <div id="sessionContainer">
         <div class='innerDiv' id='sessionCreation'>
-            <p>Welcome, it is time to open the faucet.</p>
-            <form action="" id='timePicker'>
+            <p>Welcome <%=currentUser.username%>, it is time to open the faucet.</p>
+            <form action="" id='sessionScheduleForm'>
                 <div class="timerDiv">
                     <div id="timeInputs">
                         <label for="hoursInput">Hours:</label>
@@ -31,8 +31,13 @@
                     <a id='clearTimerBtn' class='funcBtn'>Clear Timer</a>
                     <p id='targetTime'>Your session will end at <strong><span id='targetEndingTime'></span></strong></p>
                 </div>
-                <p><strong>Start a new session:</strong></p>
-                <textarea name="mission" placeholder='Session Mission' id="missionInput" cols="30" rows="10"></textarea>
+                <p><strong>Add missions to your new session:</strong></p>
+                <ul id='sessionMissions'>
+                </ul>
+                <label for="sessionMission">New Mission:</label>
+                    <input id='sessionMission' type="text">
+                    <button id='addMissionBtn' type="button">Add</button>
+                <textarea name="comments" placeholder='Comments for this session' id="missionCommentsInput" cols="30" rows="10"></textarea>
                 <br><br>
                 <button id='startSessionBtn'>Start Session</button><br>
             </form>
@@ -47,12 +52,10 @@
             </div>
 
             <div class="sessionObjectives">
-                <p><strong>The objective for this session is:</strong></p>
-                <p id='sessionObjectives'></p>
+                <p><strong>The missions for this session are:</strong></p>
+                <ul id='sessionMissionsDisplay'></ul>
+                <p id='sessionComments'></p>
             </div>
-            <hr>
-            <p>Go for it! This music will help you:</p>
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/YY-otpFaJ-w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>    
         </div>
 
         <div class='innerDiv' id="sessionClosing">

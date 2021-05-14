@@ -20,6 +20,7 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: 'WorkSession'
     }],
+    topics : [String],
     elapsedTimeWorking : { type: Number, default: 0 }
 });
 

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <title>Drip Work App</title>
+</head>
+<body>
+    <div class="topNavbar">
+        <h1>Drip Work</h1>
+    </div>
+    <div class="sessionContainer">
+        <div class="innerDiv">
+            <h1>Schedule a New Session</h1>
+            <form action="/scheduleSessions" id="scheduleSessionForm">
+                <div id="sessionScheduleDiv">
+                    <label for="sessionDate">Session Date & Time: </label>
+                    <input id='sessionDate' name='sessionDate' type="datetime-local"><br>
+    
+                    <p>What topic are you going to work in?</p>
+                      
+                    <div id="topicSelection">
+                        <div>
+                            <input type="radio" id="bookStudy" name="sessionTopic" value="bookStudy">
+                            <label for="bookStudy">Book Study</label>
+                          </div>
+                          
+                          <div>
+                            <input type="radio" id="onlineCourse" name="sessionTopic" value="onlineCourse">
+                            <label for="onlineCourse">Online Course</label>
+                          </div>
+                          
+                          <div>
+                            <input type="radio" id="projectCreation" name="sessionTopic" value="projectCreation">
+                            <label for="projectCreation">Project Creation</label>
+                          </div>     
+                    </div>
+                      <div>
+                          <label for="otherTopic">New Topic</label>
+                          <input id='otherTopic' type="text">
+                          <button id='addTopicBtn' type="button">Add Topic</button>
+                      </div>
+                      <p>The missions for this session are:</p>
+                      <div>
+                          <ul id='sessionMissions'>
+    
+                          </ul>
+                      </div>
+                    <label for="sessionMission">Session Mission</label>
+                    <input id='sessionMission' type="text">
+                    <button id='addMissionBtn' type="button">Add Mission</button>
+                    <br>
+                    <p><strong>Target Duration:</strong></p>
+                    <label for="hoursInput">Hours:</label>
+                    <input id='hoursInput' type="number" placeholder="hr" name='hours'><br>
+                    <label for="minutesInput">Minutes:</label>
+                    <input id='minutesInput' type="number" placeholder="min" name='minutes'><br>
+                    <label for="secondsInput">Seconds:</label>
+                    <input id='secondsInput' type="number" placeholder="sec" name='seconds'><br>
+                    <br>
+                </div>
+                <div id="sessionReviewDiv">
+                    <p>Here the session will be reviewed</p>
+                    <p><strong>12 May 2021 - 12:43:45</strong></p>
+                    <p>Target Duration: <span id='sessionTargetDuration'>00:88:88</span></p>
+                    <p>Topic: <span id='sessionTopic'>Book Studying</span></p>
+                    <p>Missions for this session:</p>
+                    <ul>
+                        <li>Mission 1</li>
+                        <li>Mission 2</li>
+                        <li>Mission 3</li>
+                    </ul>
+                </div>
+                
+                <button type='button' id='previewSessionBtn'>Preview Session</button>
+                <button type='button' id='editSessionBtn'>Edit Session</button>
+                <button type='submit' id='submitSessionBtn'>Submit Session</button>
+            </form>
+        </div>
+    </div>
+
+<div class="bottomNavbar">
+    <% if(!currentUser){ %>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    <% } else { %>
+        <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
+        <a href="/logout">Logout</a>
+    <% } %>
+    <a id='suggestionsBtn'>Suggestions</a>
+</div>
+
+    <script src='scripts/schedule.js'></script>
+</body>
+</html>

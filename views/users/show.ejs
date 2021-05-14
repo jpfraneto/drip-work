@@ -26,7 +26,7 @@
                     <td><%= session.index %></td>
                     <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
                     <td><%= session.targetDuration / 1000%></td>
-                    <td><%= session.mission %></td>
+                    <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionMissions(this)'>Missions</span></td>
                     <td><%= session.rating %></td>
                     <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionComments(this)'>Comments</span></td>
                 </tr>
@@ -34,6 +34,18 @@
         </tbody>
     </table>
     <a href="/">Landing Page</a>
+    <a href="/schedule">Schedule Day</a>
+
+    <div class="bottomNavbar">
+        <% if(!currentUser){ %>
+            <a href="/login">Login</a>
+            <a href="/register">Register</a>
+        <% } else { %>
+            <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
+            <a href="/logout">Logout</a>
+        <% } %>
+        <a id='suggestionsBtn'>Suggestions</a>
+    </div>
 
     <script src='/scripts/userScript.js'></script>
 </body>
