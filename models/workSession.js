@@ -7,11 +7,12 @@ var WorkSessionSchema = new Schema({
   scheduledStartingTimestamp : Date,
   realStartingTimestamp : Date,
   targetDuration : Number,
+  realDuration : Number,
   missions : [String],
   comments : String,
   rating : Number,
   afterStats : {
-      duration : Number,
+      completionrating : Number,
       feelingRating : Number,
       comments : String
   }

@@ -14,7 +14,8 @@
             <tr>
                 <td>Index</td>
                 <td>Date</td>
-                <td>Target Duration (seconds)</td>
+                <td>Target (s)</td>
+                <td>Real (s)</td>
                 <td>Mission</td>
                 <td>Completion Rating</td>
                 <td>Comments of this Session</td>
@@ -26,6 +27,7 @@
                     <td><%= session.index %></td>
                     <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
                     <td><%= session.targetDuration / 1000%></td>
+                    <td><%= session.realDuration / 1000 %></td>
                     <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionMissions(this)'>Missions</span></td>
                     <td><%= session.rating %></td>
                     <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionComments(this)'>Comments</span></td>

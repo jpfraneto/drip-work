@@ -41,15 +41,20 @@ function startSession (missions, comments, targetDuration) {
   missions.forEach((mission)=>{
     let li = document.createElement('li');
     li.appendChild(document.createTextNode(mission));
+    li.addEventListener('click', ()=>{
+      li.classList.toggle("completed");
+    })
     document.getElementById('sessionMissionsDisplay').appendChild(li);
   })
 
-  var timer = startTimer(targetDuration)
+  var timerObj = startTimer(targetDuration);
+  var now = new Date().getTime();
+  localStorage.setItem('startingTimestamp', now) ;
 
-  document.getElementById('pauseSessionBtn').addEventListener('click', timer.pause);
-  document.getElementById('resumeSessionBtn').addEventListener('click', timer.resume);
+  document.getElementById('pauseSessionBtn').addEventListener('click', timerObj.pause);
+  document.getElementById('resumeSessionBtn').addEventListener('click', timerObj.resume);
   document.getElementById('stopSessionBtn').addEventListener('click', () => {
-    stopSession(timer);
+    stopSession(timerObj.timer);
   });
 
   var currentUser = document.getElementById('currentUser').innerText;
@@ -59,7 +64,7 @@ function startSession (missions, comments, targetDuration) {
     targetDuration : targetDuration,
     missions : missions,
     comments : comments,
-    startingTimestamp : new Date().getTime()
+    startingTimestamp : now
   };
 
   fetch('/startNewSession', {
@@ -78,17 +83,19 @@ function startSession (missions, comments, targetDuration) {
   });
 }
 
-function startTimer (ms, container) {
-  var startTime, timer, obj, display = document.getElementById('clock');
-  obj = {};
+function startTimer (ms) {
+  var startTime, timer, obj, elapsedTime, display = document.getElementById('clock');
+  obj = {elapsedTime:500}; 
   obj.resume = function () {
     startTime = new Date().getTime();
     timer = setInterval(obj.step, 500);
+    obj.timer = timer;
     document.getElementById('pauseSessionBtn').style.display = 'inline-block';
     document.getElementById('resumeSessionBtn').style.display = 'none';
     document.getElementById('stopSessionBtn').style.display = 'none';
   }
   obj.pause = function () {
+    localStorage.setItem('elapsedTime', obj.elapsedTime) ;
     ms = obj.step();
     clearInterval(timer);
     document.getElementById('pauseSessionBtn').style.display = 'none';
@@ -96,6 +103,7 @@ function startTimer (ms, container) {
     document.getElementById('stopSessionBtn').style.display = 'inline-block';
   }
   obj.step = function () {
+    obj.elapsedTime += 500;
     var now = Math.max(0, ms-(new Date().getTime() - startTime)),
     m = Math.floor(now/60000), s= Math.floor(now/1000)%60;
     m = (m<10 ? "0" : "") + m;
@@ -113,7 +121,6 @@ function startTimer (ms, container) {
 }
 
 function endSession () {
-  console.log('inside the endSession');
   var audio = document.getElementById('finishAudio');
   audio.play();
   document.getElementById('sessionRunning').style.display = 'none';
@@ -123,7 +130,7 @@ function endSession () {
 document.getElementById('sessionResultsForm').addEventListener('submit', (e) => {
   e.preventDefault();
   let sessionID = localStorage.getItem('sessionID');
-  let sessionDuration = 333;
+  let sessionDuration = Math.round(localStorage.getItem('elapsedTime'));
   let formData = getFormData(document.getElementById('sessionResultsForm'));
   var query = {
     sessionDuration : sessionDuration,
@@ -154,10 +161,10 @@ function saveSessionToDB (query) {
     });
 }
 
-function stopSession (timer) {
+function stopSession (timer, elapsedTime) {
   if (confirm('Are you sure you want to stop this session?')) {
     clearTimeout(timer);
-    endSession();
+    endSession(elapsedTime);
     document.title = ('Drip Work App');
   } else {
     alert('You did not confirm')

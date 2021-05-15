@@ -95,8 +95,9 @@ app.post('/register', async (req, res) => {
 
 app.get('/users/:username', async (req, res) => {
     if(req.user){
-        User.findOne({username:req.user.username}).populate('workSessions')
+        User.findOne({username:req.user.username}).populate('workSessions').populate('afterStats')
         .then((thisUser) => {
+            console.log(thisUser);
             if(req.params.username === req.user.username){
                 var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
                 res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
@@ -129,9 +130,11 @@ app.post('/startNewSession', (req, res) => {
 app.post('/endSession', (req, res) => {
     WorkSession.findById({_id:req.body.sessionID})
     .then((thisSession)=>{
-        thisSession.afterStats.duration = req.body.sessionDuration;
+        thisSession.realDuration = req.body.sessionDuration;
         thisSession.rating = req.body.feelingRating;
         thisSession.afterStats.comments = req.body.comments;
+        console.log('this session is: ');
+        console.log(thisSession);
         thisSession.save(()=>{
             res.json({message:'The session was saved in your profile. Keep it going!'})
             if(req.user){

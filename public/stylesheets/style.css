@@ -173,3 +173,6 @@ textarea {
     margin: 0 auto 8px 0;
 }
 
+.completed {
+    text-decoration: line-through;
+}
