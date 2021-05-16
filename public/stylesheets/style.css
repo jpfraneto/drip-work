@@ -176,3 +176,12 @@ textarea {
 .completed {
     text-decoration: line-through;
 }
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+tr {
+    border-bottom: 1px solid #ccc;
+}

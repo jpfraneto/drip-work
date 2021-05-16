@@ -21,7 +21,7 @@ window.onload = () => {
         var missions = [];
         var missionsUl = document.getElementsByClassName('missionLi');
         for (var i = 0; i<missionsUl.length ; i++){
-            missions.push(missionsUl[i].innerHTML)
+            missions.push({mission:missionsUl[i].innerHTML, completed:false})
         }
 
         let comments = formData.comments;
@@ -38,13 +38,17 @@ window.onload = () => {
 function startSession (missions, comments, targetDuration) {
   document.getElementById('sessionComments').innerText = comments;
 
-  missions.forEach((mission)=>{
-    let li = document.createElement('li');
-    li.appendChild(document.createTextNode(mission));
-    li.addEventListener('click', ()=>{
-      li.classList.toggle("completed");
+  missions.reverse().forEach((missionObj)=>{
+    var tableBody = document.getElementById('sessionMissionsTableBody');
+    var row = tableBody.insertRow(0);
+    row.classList.add('missionRow');
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.addEventListener('click', ()=>{
+      cell1.classList.toggle("completed");
     })
-    document.getElementById('sessionMissionsDisplay').appendChild(li);
+    cell1.innerHTML = missionObj.mission;
+    cell2.innerHTML = '<span contenteditable="true">Comment</span>'
   })
 
   var timerObj = startTimer(targetDuration);
@@ -138,6 +142,18 @@ document.getElementById('sessionResultsForm').addEventListener('submit', (e) => 
     comments : formData.sessionComments,
     sessionID : sessionID
   }
+
+  var sessionMissions = document.getElementsByClassName('missionRow');
+  query.sessionMissions = [];
+  for (var i=0; i<sessionMissions.length;i++) {
+    var thisMission = {completed:false};
+    thisMission.mission = sessionMissions[i].childNodes[0].innerText;
+    thisMission.missionComments = sessionMissions[i].childNodes[1].innerText;
+    if(sessionMissions[i].childNodes[0].classList.contains('completed')){
+      thisMission.completed = true;
+    }
+    query.sessionMissions.push(thisMission);
+  }
   saveSessionToDB(query);
 })
 
@@ -204,13 +220,18 @@ function clearTimer () {
 }
 
 function addMissionTag() {
-  let newMission = document.getElementById('sessionMission').value;
-  let li = document.createElement('li');
-  li.appendChild(document.createTextNode(newMission));
-  li.classList.add('missionLi');
-  document.getElementById('sessionMissions').appendChild(li);
-  document.getElementById('sessionMission').value = "";
-  return newMission
+  if(document.getElementById('sessionMission').value) {
+    let newMission = document.getElementById('sessionMission').value;
+    let li = document.createElement('li');
+    li.appendChild(document.createTextNode(newMission));
+    li.classList.add('missionLi');
+    document.getElementById('sessionMissions').appendChild(li);
+    document.getElementById('sessionMission').value = "";
+    return newMission
+  } else {
+    alert('Please enter a mission!')
+  }
+
 }
 
 function addMission() {

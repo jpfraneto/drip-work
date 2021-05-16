@@ -8,13 +8,13 @@ var WorkSessionSchema = new Schema({
   realStartingTimestamp : Date,
   targetDuration : Number,
   realDuration : Number,
-  missions : [String],
+  missions : [{mission:String, missionComments:String, completed:Boolean}],
   comments : String,
   rating : Number,
   afterStats : {
       completionrating : Number,
       feelingRating : Number,
-      comments : String
+      afterComments : String
   }
 });
 

@@ -130,10 +130,19 @@ app.post('/startNewSession', (req, res) => {
 app.post('/endSession', (req, res) => {
     WorkSession.findById({_id:req.body.sessionID})
     .then((thisSession)=>{
+        console.log(req.body);
+        req.body.sessionMissions.forEach((sessionMission) => {
+            for (let i = 0; i < thisSession.missions.length ; i++) {
+                if (thisSession.missions[i].mission === sessionMission.mission) {
+                    thisSession.missions[i].completed = sessionMission.completed;
+                    thisSession.missions[i].missionComments = sessionMission.missionComments;
+                }
+            }
+        })
         thisSession.realDuration = req.body.sessionDuration;
-        thisSession.rating = req.body.feelingRating;
-        thisSession.afterStats.comments = req.body.comments;
-        console.log('this session is: ');
+        thisSession.afterStats.feelingRating = req.body.feelingRating;
+        thisSession.afterStats.afterComments = req.body.comments;
+        console.log('this session is:');
         console.log(thisSession);
         thisSession.save(()=>{
             res.json({message:'The session was saved in your profile. Keep it going!'})
@@ -152,7 +161,7 @@ app.post('/getSessionComment', (req, res) => {
     WorkSession.findById(req.body.sessionID).populate('afterStats')
     .then((queriedSession) => {
         console.log(queriedSession);
-        res.json({sessionComments : queriedSession.afterStats.comments})
+        res.json({sessionComments : queriedSession.afterStats.afterComments})
     })
 })
 
@@ -171,7 +180,6 @@ app.get('/schedule', (req, res) => {
 
 app.post('/schedule', (req, res) => {
     console.log(req.body);
-    let newSession = 
     res.json({123:435});
 })
 
