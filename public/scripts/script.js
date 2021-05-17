@@ -6,6 +6,37 @@ window.onload = () => {
       alert('If you have any suggestions on making this place better, email me at jpfraneto@gmail.com. I appreciate it, it benefits us all.')
     })
 
+    var listOfSessions = document.getElementById('scheduledSessionsUl');
+    listOfSessions.addEventListener('click', e => {
+      const sessionID = e.target.getAttribute('data-sessionID');
+      fetch('/getSessionInformation', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({sessionID: sessionID}),
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('this sessions data is: ');
+          console.log(data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    })
+
+    document.getElementById('newSessionBtn').addEventListener('click', () => {
+      document.getElementById('landingDiv').style.display = 'none';
+      document.getElementById('newSessionDiv').style.display = 'block';
+    })
+
+    document.getElementById('showScheduledSessions').addEventListener('click', () => {
+      document.getElementById('landingDiv').style.display = 'block';
+      document.getElementById('newSessionDiv').style.display = 'none';
+    }
+    )
+
     document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
         e.preventDefault();
         let formData = getFormData(document.getElementById('sessionScheduleForm'));
@@ -136,25 +167,32 @@ document.getElementById('sessionResultsForm').addEventListener('submit', (e) => 
   let sessionID = localStorage.getItem('sessionID');
   let sessionDuration = Math.round(localStorage.getItem('elapsedTime'));
   let formData = getFormData(document.getElementById('sessionResultsForm'));
-  var query = {
-    sessionDuration : sessionDuration,
-    feelingRating : formData.feelingRating,
-    comments : formData.sessionComments,
-    sessionID : sessionID
-  }
 
-  var sessionMissions = document.getElementsByClassName('missionRow');
-  query.sessionMissions = [];
-  for (var i=0; i<sessionMissions.length;i++) {
-    var thisMission = {completed:false};
-    thisMission.mission = sessionMissions[i].childNodes[0].innerText;
-    thisMission.missionComments = sessionMissions[i].childNodes[1].innerText;
-    if(sessionMissions[i].childNodes[0].classList.contains('completed')){
-      thisMission.completed = true;
+  if (formData.feelingRating > 0) {
+
+    var query = {
+      sessionDuration : sessionDuration,
+      feelingRating : formData.feelingRating,
+      comments : formData.sessionComments,
+      sessionID : sessionID
     }
-    query.sessionMissions.push(thisMission);
+  
+    var sessionMissions = document.getElementsByClassName('missionRow');
+    query.sessionMissions = [];
+    for (var i=0; i<sessionMissions.length;i++) {
+      var thisMission = {completed:false};
+      thisMission.mission = sessionMissions[i].childNodes[0].innerText;
+      thisMission.missionComments = sessionMissions[i].childNodes[1].innerText;
+      if(sessionMissions[i].childNodes[0].classList.contains('completed')){
+        thisMission.completed = true;
+      }
+      query.sessionMissions.push(thisMission);
+    }
+    saveSessionToDB(query);
+  } else {
+    alert('How did you feel in this session?');
+    document.getElementById('feelingRating').focus();
   }
-  saveSessionToDB(query);
 })
 
 function saveSessionToDB (query) {

@@ -61,7 +61,14 @@ app.use((req, res, next) => {
 })
 
 app.get('/', (req, res) => {
-    if(req.user) res.render('index');
+    if(req.user) {
+        User.findOne({username : req.user.username}).populate('workSessions')
+        .then((thisUser) => {
+            let scheduledSessions = thisUser.workSessions.filter(x => x.scheduled);
+            console.log(scheduledSessions);
+            res.render('index', {scheduledSessions : scheduledSessions})
+        })
+    }
     else res.redirect('login');
 })
 
@@ -97,7 +104,6 @@ app.get('/users/:username', async (req, res) => {
     if(req.user){
         User.findOne({username:req.user.username}).populate('workSessions').populate('afterStats')
         .then((thisUser) => {
-            console.log(thisUser);
             if(req.params.username === req.user.username){
                 var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
                 res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
@@ -111,11 +117,12 @@ app.get('/users/:username', async (req, res) => {
 })
 
 app.post('/startNewSession', (req, res) => {
-    User.findOne({username:req.body.username})
+    User.findOne({username:req.user.username})
     .then((thisUser) => {
         let newSession = new WorkSession({
             index : thisUser.workSessions.length,
             targetDuration : req.body.targetDuration,
+            scheduled : false,
             missions : req.body.missions,
             comments : req.body.comments,
             realStartingTimestamp : req.body.startingTimestamp
@@ -130,7 +137,6 @@ app.post('/startNewSession', (req, res) => {
 app.post('/endSession', (req, res) => {
     WorkSession.findById({_id:req.body.sessionID})
     .then((thisSession)=>{
-        console.log(req.body);
         req.body.sessionMissions.forEach((sessionMission) => {
             for (let i = 0; i < thisSession.missions.length ; i++) {
                 if (thisSession.missions[i].mission === sessionMission.mission) {
@@ -142,8 +148,7 @@ app.post('/endSession', (req, res) => {
         thisSession.realDuration = req.body.sessionDuration;
         thisSession.afterStats.feelingRating = req.body.feelingRating;
         thisSession.afterStats.afterComments = req.body.comments;
-        console.log('this session is:');
-        console.log(thisSession);
+        thisSession.rating = calculateSessionRating(thisSession.afterStats.feelingRating, thisSession.targetDuration, thisSession.realDuration)
         thisSession.save(()=>{
             res.json({message:'The session was saved in your profile. Keep it going!'})
             if(req.user){
@@ -166,10 +171,16 @@ app.post('/getSessionComment', (req, res) => {
 })
 
 app.post('/getSessionMissions', (req, res) => {
-    console.log(req.body.sessionID);
     WorkSession.findById(req.body.sessionID)
     .then((queriedSession) => {
         res.json({sessionMissions : queriedSession.missions})
+    })
+})
+
+app.post('/getSessionInformation', (req, res) => {
+    WorkSession.findById(req.body.sessionID)
+    .then((queriedSession) => {
+        res.json({queriedSession})
     })
 })
 
@@ -179,11 +190,27 @@ app.get('/schedule', (req, res) => {
 })
 
 app.post('/schedule', (req, res) => {
-    console.log(req.body);
-    res.json({123:435});
+    User.findOne({username:req.user.username})
+    .then((thisUser) => {
+        let newSession = new WorkSession({
+            targetDuration : req.body.targetDuration,
+            scheduled : true,
+            missions : req.body.missions,
+            comments : req.body.comments,
+            scheduledStartingDate : req.body.date
+        });
+        newSession.save();
+        thisUser.workSessions.push(newSession);
+        thisUser.save();
+        res.json({message:'the session was scheduled on the user'});
+    });
 })
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server started on port: http://localhost:${port}`);
 })
+
+function calculateSessionRating(feelingRating, targetDuration, realDuration){
+    return (0,1*((feelingRating*3/100) + (realDuration*7/targetDuration)))
+}

@@ -6,7 +6,7 @@ window.onload = () => {
 
     document.getElementById('scheduleSessionForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        var date = document.getElementById('sessionDate').value;
+        var date = Date.parse(document.getElementById('sessionDate').value);
         var radios = document.getElementsByName('sessionTopic');
         let hours = document.getElementById('hoursInput').value;
         let minutes = document.getElementById('minutesInput').value;
@@ -19,7 +19,7 @@ window.onload = () => {
         var missions = [];
         var missionsUl = document.getElementsByClassName('missionLi');
         for (var i = 0; i<missionsUl.length ; i++){
-            missions.push(missionsUl[i].innerHTML)
+            missions.push({mission:missionsUl[i].innerHTML, completed:false})
         }
         var query = {
             date : date,
@@ -78,6 +78,7 @@ function previewSession () {
     document.getElementById('submitSessionBtn').style.display = 'inline-block';
     document.getElementById('sessionScheduleDiv').style.display = 'none';
     document.getElementById('sessionReviewDiv').style.display = 'block';
+    document.getElementById('sessionDatePreview').innerText = document.getElementById('sessionDate').value;
 }
 
 function editSession () {

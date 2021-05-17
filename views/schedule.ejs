@@ -14,10 +14,10 @@
     <div class="sessionContainer">
         <div class="innerDiv">
             <h1>Schedule a New Session</h1>
-            <form action="/scheduleSessions" id="scheduleSessionForm">
+            <form action="/scheduleSessions" id="scheduleSessionForm" onkeydown="return event.key != 'Enter';">
                 <div id="sessionScheduleDiv">
-                    <label for="sessionDate">Session Date & Time: </label>
-                    <input id='sessionDate' name='sessionDate' type="datetime-local"><br>
+                    <label for="sessionDate">Session Date: </label>
+                    <input id='sessionDate' name='sessionDate' type="date"><br>
     
                     <p>What topic are you going to work in?</p>
                       
@@ -62,8 +62,8 @@
                     <br>
                 </div>
                 <div id="sessionReviewDiv">
-                    <p>Here the session will be reviewed</p>
-                    <p><strong>12 May 2021 - 12:43:45</strong></p>
+                    <p>This is the session you are about to schedule:</p>
+                    <p><strong id='sessionDatePreview'>12 May 2021</strong></p>
                     <p>Target Duration: <span id='sessionTargetDuration'>00:88:88</span></p>
                     <p>Topic: <span id='sessionTopic'>Book Studying</span></p>
                     <p>Missions for this session:</p>

@@ -17,30 +17,43 @@
     <div id="sessionContainer">
         <div class='innerDiv' id='sessionCreation'>
             <p>Welcome <%=currentUser.username%>, it is time to open the faucet.</p>
-            <form action="" id='sessionScheduleForm'>
-                <div class="timerDiv">
-                    <div id="timeInputs">
-                        <label for="hoursInput">Hours:</label>
-                        <input id='hoursInput' type="number" placeholder="hr" name='hours'>
-                        <label for="minutesInput">Minutes:</label>
-                        <input id='minutesInput' type="number" placeholder="min" name='minutes'>
-                        <label for="secondsInput">Seconds:</label>
-                        <input id='secondsInput' type="number" placeholder="sec" name='seconds'>
-                    </div>
-                    <a id='setTimerBtn' class='funcBtn'>Set Timer</a>
-                    <a id='clearTimerBtn' class='funcBtn'>Clear Timer</a>
-                    <p id='targetTime'>Your session will end at <strong><span id='targetEndingTime'></span></strong></p>
-                </div>
-                <p><strong>Add missions to your new session:</strong></p>
-                <ul id='sessionMissions'>
+            <div id="landingDiv">
+                <p>Your pending sessions are:</p>
+                <ul id='scheduledSessionsUl'>
+                    <% for (var i = 0; i<scheduledSessions.length ; i++) { %>
+                        <li data-sessionID="<%=scheduledSessions[i]._id%>"><%=scheduledSessions[i].scheduledStartingTimestamp.toDateString()%> - <%=scheduledSessions[i].missions.length%> Missions</li>
+                    <% } %>
                 </ul>
-                <label for="sessionMission">New Mission:</label>
-                    <input id='sessionMission' type="text">
-                    <button id='addMissionBtn' type="button">Add</button>
-                <textarea name="comments" placeholder='Comments for this session' id="missionCommentsInput" cols="30" rows="10"></textarea>
-                <br><br>
-                <button id='startSessionBtn'>Start Session</button><br>
-            </form>
+                <button type='button' id='newSessionBtn'>Create New Session</button>
+            </div>
+            <div id="newSessionDiv">
+                <form action="" id='sessionScheduleForm'>
+                    <div class="timerDiv">
+                        <div id="timeInputs">
+                            <label for="hoursInput">Hours:</label>
+                            <input id='hoursInput' type="number" placeholder="hr" name='hours'>
+                            <label for="minutesInput">Minutes:</label>
+                            <input id='minutesInput' type="number" placeholder="min" name='minutes'>
+                            <label for="secondsInput">Seconds:</label>
+                            <input id='secondsInput' type="number" placeholder="sec" name='seconds'>
+                        </div>
+                        <a id='setTimerBtn' class='funcBtn'>Set Timer</a>
+                        <a id='clearTimerBtn' class='funcBtn'>Clear Timer</a>
+                        <p id='targetTime'>Your session will end at <strong><span id='targetEndingTime'></span></strong></p>
+                    </div>
+                    <p><strong>Add missions to your new session:</strong></p>
+                    <ul id='sessionMissions'>
+                    </ul>
+                    <label for="sessionMission">New Mission:</label>
+                        <input id='sessionMission' type="text">
+                        <button id='addMissionBtn' type="button">Add</button>
+                    <textarea name="comments" placeholder='Comments for this session' id="missionCommentsInput" cols="30" rows="10"></textarea>
+                    <br><br>
+                    <button type ='button' id='showScheduledSessions'>Scheduled Sessions</button>
+                    <button type ='submit' id='startSessionBtn'>Start Session</button><br>
+                </form>
+            </div>
+
         </div>
 
         <div class='innerDiv' id="sessionRunning">

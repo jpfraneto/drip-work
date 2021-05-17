@@ -3,9 +3,10 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var WorkSessionSchema = new Schema({
+  scheduled : Boolean,
   index : Number,
   scheduledStartingTimestamp : Date,
-  realStartingTimestamp : Date,
+  realStartingDate : Date,
   targetDuration : Number,
   realDuration : Number,
   missions : [{mission:String, missionComments:String, completed:Boolean}],
