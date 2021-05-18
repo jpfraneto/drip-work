@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var WorkSessionSchema = new Schema({
   scheduled : Boolean,
   index : Number,
-  scheduledStartingTimestamp : Date,
+  scheduledStartingDate : Date,
   realStartingDate : Date,
   targetDuration : Number,
   realDuration : Number,

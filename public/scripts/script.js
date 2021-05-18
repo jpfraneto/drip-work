@@ -2,9 +2,9 @@ window.onload = () => {
     document.getElementById('addMissionBtn').addEventListener('click', addMission);
     document.getElementById('setTimerBtn').addEventListener('click', setTargetEndingTime)
     document.getElementById('clearTimerBtn').addEventListener('click', clearTimer);
-    document.getElementById('suggestionsBtn').addEventListener('click', ()=>{
-      alert('If you have any suggestions on making this place better, email me at jpfraneto@gmail.com. I appreciate it, it benefits us all.')
-    })
+    // document.getElementById('suggestionsBtn').addEventListener('click', ()=>{
+    //   alert('If you have any suggestions on making this place better, email me at jpfraneto@gmail.com. I appreciate it, it benefits us all.')
+    // })
 
     var listOfSessions = document.getElementById('scheduledSessionsUl');
     listOfSessions.addEventListener('click', e => {
@@ -18,8 +18,7 @@ window.onload = () => {
         })
         .then(response => response.json())
         .then(data => {
-          console.log('this sessions data is: ');
-          console.log(data);
+          updateNewSession(data.queriedSession);
         })
         .catch((error) => {
           console.error('Error:', error);
@@ -31,12 +30,6 @@ window.onload = () => {
       document.getElementById('newSessionDiv').style.display = 'block';
     })
 
-    document.getElementById('showScheduledSessions').addEventListener('click', () => {
-      document.getElementById('landingDiv').style.display = 'block';
-      document.getElementById('newSessionDiv').style.display = 'none';
-    }
-    )
-
     document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
         e.preventDefault();
         let formData = getFormData(document.getElementById('sessionScheduleForm'));
@@ -47,7 +40,6 @@ window.onload = () => {
         minutes = hours * 60 + minutes;
         minutes = (minutes < 10 ? "0" : "") + minutes;
         seconds = (seconds < 10 ? "0" : "") + seconds;
-        console.log(minutes,seconds);
 
         var missions = [];
         var missionsUl = document.getElementsByClassName('missionLi');
@@ -92,7 +84,7 @@ function startSession (missions, comments, targetDuration) {
     stopSession(timerObj.timer);
   });
 
-  var currentUser = document.getElementById('currentUser').innerText;
+  var currentUser = document.getElementById('currentUserP').innerText;
 
   var query = {
     username : currentUser,
@@ -257,21 +249,48 @@ function clearTimer () {
   document.getElementById('secondsInput').value = 0;
 }
 
-function addMissionTag() {
-  if(document.getElementById('sessionMission').value) {
-    let newMission = document.getElementById('sessionMission').value;
-    let li = document.createElement('li');
-    li.appendChild(document.createTextNode(newMission));
-    li.classList.add('missionLi');
-    document.getElementById('sessionMissions').appendChild(li);
-    document.getElementById('sessionMission').value = "";
-    return newMission
-  } else {
-    alert('Please enter a mission!')
-  }
-
+function addMissionTag(newMission) {
+  let li = document.createElement('li');
+  li.appendChild(document.createTextNode(mission));
+  li.classList.add('missionLi');
+  document.getElementById('sessionMissions').appendChild(li);
+  document.getElementById('sessionMission').value = "";
 }
 
 function addMission() {
-  addMissionTag();
+  let newMission = document.getElementById('sessionMission').value;
+  if(newMission) {
+    addMissionTag(newMission);
+  } else {
+    alert('Please enter a new mission!')
+  }
+}
+
+function updateNewSession(data) {
+  document.getElementById('landingDiv').style.display = 'none';
+  document.getElementById('newSessionDiv').style.display = 'block';
+
+  document.getElementById('missionCommentsInput').innerText = data.comments;
+
+  var duration = msToTime(data.targetDuration);
+  document.getElementById('hoursInput').value = duration.hours;
+  document.getElementById('minutesInput').value = duration.minutes;
+  document.getElementById('secondsInput').value = duration.seconds;
+  data.missions.forEach((mission) => {
+    addMissionTag(mission);
+  })
+}
+
+function msToTime(duration) {
+  var response = {};
+  var milliseconds = Math.floor((duration % 1000) / 100),
+    seconds = Math.floor((duration / 1000) % 60),
+    minutes = Math.floor((duration / (1000 * 60)) % 60),
+    hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+
+  response.hours = (hours < 10) ? "0" + hours : hours;
+  response.minutes = (minutes < 10) ? "0" + minutes : minutes;
+  response.seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+  return response
 }

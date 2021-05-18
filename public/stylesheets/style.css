@@ -73,7 +73,7 @@ body {
 
 textarea {
     margin-top: 8px;
-    width: 100%;
+    width: 88%;
     height: 88px;
 }
 
@@ -173,6 +173,10 @@ textarea {
     margin: 0 auto 8px 0;
 }
 
+#scheduleSessionForm {
+    text-align: center;
+}
+
 .completed {
     text-decoration: line-through;
 }
@@ -193,4 +197,13 @@ tr {
 ul {
     list-style-type: none;
     padding-left: 0;
+}
+
+#sessionScheduleReview {
+    display: none;
+    text-align: center;
+}
+
+#currentUserP {
+    display: none;
 }

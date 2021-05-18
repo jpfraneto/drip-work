@@ -13,18 +13,22 @@
     </div>
     <audio hidden id='finishAudio'>
     <source src="/audio/ping.mp3" type='audio/mpeg'></audio>
+    <p id='currentUserP'><%=currentUser.username%></p>
     
     <div id="sessionContainer">
         <div class='innerDiv' id='sessionCreation'>
             <p>Welcome <%=currentUser.username%>, it is time to open the faucet.</p>
             <div id="landingDiv">
-                <p>Your pending sessions are:</p>
-                <ul id='scheduledSessionsUl'>
-                    <% for (var i = 0; i<scheduledSessions.length ; i++) { %>
-                        <li data-sessionID="<%=scheduledSessions[i]._id%>"><%=scheduledSessions[i].scheduledStartingTimestamp.toDateString()%> - <%=scheduledSessions[i].missions.length%> Missions</li>
-                    <% } %>
-                </ul>
-                <button type='button' id='newSessionBtn'>Create New Session</button>
+                <% if(scheduledSessions.length > 0){ %>
+                    <p><strong>Your pending sessions are:</strong></p>
+                    <ul id='scheduledSessionsUl'>
+                        <% for (var i = 0; i<scheduledSessions.length ; i++) { %>
+                            <li data-sessionID="<%=scheduledSessions[i]._id%>"><%=scheduledSessions[i].scheduledStartingDate.toDateString()%> - <%=scheduledSessions[i].missions.length%> Missions</li>
+                        <% } %>
+                    </ul>
+                <% } %>
+                <a href="/schedule"><button>Schedule New Session</button></a>
+                <button type='button' id='newSessionBtn'>Start New Session</button>
             </div>
             <div id="newSessionDiv">
                 <form action="" id='sessionScheduleForm'>
@@ -49,8 +53,8 @@
                         <button id='addMissionBtn' type="button">Add</button>
                     <textarea name="comments" placeholder='Comments for this session' id="missionCommentsInput" cols="30" rows="10"></textarea>
                     <br><br>
-                    <button type ='button' id='showScheduledSessions'>Scheduled Sessions</button>
-                    <button type ='submit' id='startSessionBtn'>Start Session</button><br>
+                    <button type ='submit' id='startSessionBtn'>Start Session</button>
+                    <a href=""><button type ='button'>Back</button></a> 
                 </form>
             </div>
 
@@ -103,7 +107,7 @@
     </div>
     <br>
 
-<div class="bottomNavbar">
+<!-- <div class="bottomNavbar">
     <% if(!currentUser){ %>
         <a href="/login">Login</a>
         <a href="/register">Register</a>
@@ -112,7 +116,7 @@
         <a href="/logout">Logout</a>
     <% } %>
     <a id='suggestionsBtn'>Suggestions</a>
-</div>
+</div> -->
 
     <script src='scripts/script.js'></script>
 </body>

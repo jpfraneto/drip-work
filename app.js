@@ -65,7 +65,6 @@ app.get('/', (req, res) => {
         User.findOne({username : req.user.username}).populate('workSessions')
         .then((thisUser) => {
             let scheduledSessions = thisUser.workSessions.filter(x => x.scheduled);
-            console.log(scheduledSessions);
             res.render('index', {scheduledSessions : scheduledSessions})
         })
     }
@@ -106,6 +105,7 @@ app.get('/users/:username', async (req, res) => {
         .then((thisUser) => {
             if(req.params.username === req.user.username){
                 var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
+                var finishedSessions = thisUser.workSessions.filter(x => !x.scheduled)
                 res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
             } else {
                 res.redirect('/login');
@@ -165,7 +165,6 @@ app.post('/endSession', (req, res) => {
 app.post('/getSessionComment', (req, res) => {
     WorkSession.findById(req.body.sessionID).populate('afterStats')
     .then((queriedSession) => {
-        console.log(queriedSession);
         res.json({sessionComments : queriedSession.afterStats.afterComments})
     })
 })
@@ -202,7 +201,7 @@ app.post('/schedule', (req, res) => {
         newSession.save();
         thisUser.workSessions.push(newSession);
         thisUser.save();
-        res.json({message:'the session was scheduled on the user'});
+        res.json({message:'Your new session was scheduled'});
     });
 })
 
