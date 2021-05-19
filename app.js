@@ -64,6 +64,7 @@ app.get('/', (req, res) => {
     if(req.user) {
         User.findOne({username : req.user.username}).populate('workSessions')
         .then((thisUser) => {
+            console.log(thisUser);
             let scheduledSessions = thisUser.workSessions.filter(x => x.scheduled);
             res.render('index', {scheduledSessions : scheduledSessions})
         })
@@ -116,21 +117,34 @@ app.get('/users/:username', async (req, res) => {
     }
 })
 
-app.post('/startNewSession', (req, res) => {
+app.post('/startSession', (req, res) => {
     User.findOne({username:req.user.username})
     .then((thisUser) => {
-        let newSession = new WorkSession({
-            index : thisUser.workSessions.length,
-            targetDuration : req.body.targetDuration,
-            scheduled : false,
-            missions : req.body.missions,
-            comments : req.body.comments,
-            realStartingTimestamp : req.body.startingTimestamp
-        });
-        newSession.save();
-        thisUser.workSessions.push(newSession);
-        thisUser.save();
-        res.json({sessionID:newSession._id});
+        if(req.body.sessionID) {
+            WorkSession.findById(req.body.sessionID)
+            .then((scheduledSession) => {
+                scheduledSession.missions = req.body.missions;
+                scheduledSession.realStartingTimestamp = req.body.startingTimestamp;
+                scheduledSession.targetDuration = req.body.targetDuration;
+                scheduledSession.save();
+                console.log('scheduledSession', scheduledSession)
+                res.json({sessionID:req.body.sessionID});
+            });
+        } else {
+            let newSession = new WorkSession({
+                index : thisUser.workSessions.length,
+                targetDuration : req.body.targetDuration,
+                scheduled : false,
+                missions : req.body.missions,
+                comments : req.body.comments,
+                realStartingTimestamp : req.body.startingTimestamp
+            });
+            console.log('newSession', newSession);
+            newSession.save();
+            thisUser.workSessions.push(newSession);
+            thisUser.save();
+            res.json({sessionID:newSession._id});
+        }
     });
 });
 
@@ -148,6 +162,7 @@ app.post('/endSession', (req, res) => {
         thisSession.realDuration = req.body.sessionDuration;
         thisSession.afterStats.feelingRating = req.body.feelingRating;
         thisSession.afterStats.afterComments = req.body.comments;
+        if(!req.body.scheduled) thisSession.scheduled = false;
         thisSession.rating = calculateSessionRating(thisSession.afterStats.feelingRating, thisSession.targetDuration, thisSession.realDuration)
         thisSession.save(()=>{
             res.json({message:'The session was saved in your profile. Keep it going!'})
@@ -211,5 +226,6 @@ app.listen(port, () => {
 })
 
 function calculateSessionRating(feelingRating, targetDuration, realDuration){
+    if(targetDuration<realDuration) return 0,1*(feelingRating*3/100);
     return (0,1*((feelingRating*3/100) + (realDuration*7/targetDuration)))
 }

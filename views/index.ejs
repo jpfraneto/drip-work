@@ -45,12 +45,14 @@
                         <a id='clearTimerBtn' class='funcBtn'>Clear Timer</a>
                         <p id='targetTime'>Your session will end at <strong><span id='targetEndingTime'></span></strong></p>
                     </div>
-                    <p><strong>Add missions to your new session:</strong></p>
+                    <p><strong>Add missions to your <span id='scheduledBoolean'>new</span> session:</strong></p>
                     <ul id='sessionMissions'>
                     </ul>
                     <label for="sessionMission">New Mission:</label>
-                        <input id='sessionMission' type="text">
-                        <button id='addMissionBtn' type="button">Add</button>
+                    <input id='sessionMission' type="text">
+                    <button id='addMissionBtn' type="button">Add</button>
+                    <br><br>
+                    <label for="missionCommentsInput"><strong>Comments:</strong></label>
                     <textarea name="comments" placeholder='Comments for this session' id="missionCommentsInput" cols="30" rows="10"></textarea>
                     <br><br>
                     <button type ='submit' id='startSessionBtn'>Start Session</button>
@@ -65,7 +67,9 @@
                 <h1 id='clock'></h1>
                 <a id='pauseSessionBtn' class='funcBtn'>Pause</a>
                 <a id='resumeSessionBtn' class='funcBtn'>Resume</a>
-                <a id='stopSessionBtn' class='funcBtn'>End Session</a>
+                <a id='stopSessionBtn' class='funcBtn'>End Session</a><br>
+                <label for="timerInTabBtn">Do you want to see the timer in the tab?</label>
+                <input type="checkbox" id='timerInTabBtn'>
             </div>
 
             <div class="sessionObjectives">
@@ -89,7 +93,7 @@
             <form id='sessionResultsForm' method="POST" action="/endSession">
                 <label for="feelingRating">Feeling Rating (From 0 to 100)</label>
                 <input id='feelingRating' name='feelingRating' type="number" min="0" max="100"><br>
-                <label for="sessionComments">Comments</label>
+                <label for="sessionComments"><strong>Comments</strong></label>
                 <textarea name="sessionComments" id="sessionComments"></textarea><br>
                 <button type="submit">Close Session!</button>
             </form>
@@ -107,7 +111,7 @@
     </div>
     <br>
 
-<!-- <div class="bottomNavbar">
+<div class="bottomNavbar">
     <% if(!currentUser){ %>
         <a href="/login">Login</a>
         <a href="/register">Register</a>
@@ -115,8 +119,7 @@
         <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
         <a href="/logout">Logout</a>
     <% } %>
-    <a id='suggestionsBtn'>Suggestions</a>
-</div> -->
+</div>
 
     <script src='scripts/script.js'></script>
 </body>

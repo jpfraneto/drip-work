@@ -26,10 +26,36 @@ function sessionMissions (element) {
     .then(response => response.json())
     .then(data => {
       if (data.sessionMissions) {
-        alert(data.sessionMissions);
+        data.sessionMissions.forEach((mission) => {
+          addMissionToModal(mission)
+        })
       }
     })
     .catch((error) => {
       console.error('Error:', error);
     });
+}
+
+var modals = document.querySelectorAll('[data-modal]');
+
+modals.forEach(function(trigger) {
+  trigger.addEventListener('click', function(event) {
+    event.preventDefault();
+    var modal = document.getElementById(trigger.dataset.modal);
+    modal.classList.add('open');
+    var exits = modal.querySelectorAll('.modal-exit');
+    exits.forEach(function(exit) {
+      exit.addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('modalMissionsDisplay').innerHTML = "";
+        modal.classList.remove('open');
+      });
+    });
+  });
+});
+
+function addMissionToModal(mission) {
+  let li = document.createElement('li');
+  li.innerHTML = '<p><strong>Misión :</strong>'+ mission.mission + ' <br> <strong>Comentarios:</strong> '+ mission.missionComments + ' <br> <strong>Fue completada? </strong>' + mission.completed +'</p> <hr>';
+  document.getElementById('modalMissionsDisplay').appendChild(li);
 }

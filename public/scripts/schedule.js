@@ -96,7 +96,7 @@ function updateSessionPreview () {
 
 function getFormData () {
     let formData = {};
-    formData.date = Date.parse(document.getElementById('sessionDate').value);
+    formData.date = 86400000 + Date.parse(document.getElementById('sessionDate').value);
     if(formData.date < new Date()) return alert('Why do you want to schedule a session in the past?');
     var radios = document.getElementsByName('sessionTopic');
     let hours = document.getElementById('hoursInput').value;

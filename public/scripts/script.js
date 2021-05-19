@@ -2,28 +2,28 @@ window.onload = () => {
     document.getElementById('addMissionBtn').addEventListener('click', addMission);
     document.getElementById('setTimerBtn').addEventListener('click', setTargetEndingTime)
     document.getElementById('clearTimerBtn').addEventListener('click', clearTimer);
-    // document.getElementById('suggestionsBtn').addEventListener('click', ()=>{
-    //   alert('If you have any suggestions on making this place better, email me at jpfraneto@gmail.com. I appreciate it, it benefits us all.')
-    // })
 
     var listOfSessions = document.getElementById('scheduledSessionsUl');
-    listOfSessions.addEventListener('click', e => {
-      const sessionID = e.target.getAttribute('data-sessionID');
-      fetch('/getSessionInformation', {
-        method: 'POST', 
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({sessionID: sessionID}),
-        })
-        .then(response => response.json())
-        .then(data => {
-          updateNewSession(data.queriedSession);
-        })
-        .catch((error) => {
-          console.error('Error:', error);
-        });
-    })
+    if(listOfSessions){
+      listOfSessions.addEventListener('click', e => {
+        const sessionID = e.target.getAttribute('data-sessionID');
+        fetch('/getSessionInformation', {
+          method: 'POST', 
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({sessionID: sessionID}),
+          })
+          .then(response => response.json())
+          .then(data => {
+            localStorage.setItem('sessionID', sessionID);
+            updateNewSession(data.queriedSession);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
+      })
+    }
 
     document.getElementById('newSessionBtn').addEventListener('click', () => {
       document.getElementById('landingDiv').style.display = 'none';
@@ -33,11 +33,11 @@ window.onload = () => {
     document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
         e.preventDefault();
         let formData = getFormData(document.getElementById('sessionScheduleForm'));
-        let hours = formData.hours;
-        let minutes = formData.minutes;
-        let seconds = formData.seconds || "0";
+        let hours = formData.hours || 0;
+        let minutes = formData.minutes || 0;
+        let seconds = formData.seconds || 0;
         var totalMiliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
-        minutes = hours * 60 + minutes;
+        hours   = (hours   < 10 ? "0" : "") + hours;
         minutes = (minutes < 10 ? "0" : "") + minutes;
         seconds = (seconds < 10 ? "0" : "") + seconds;
 
@@ -51,7 +51,7 @@ window.onload = () => {
 
         if (totalMiliseconds > 0) {
           startSession(missions, comments, totalMiliseconds);
-          document.getElementById('clock').innerHTML = minutes + ":" + seconds;
+          document.getElementById('clock').innerHTML = hours + ":" + minutes + ":" + seconds;
           document.getElementById('sessionCreation').style.display = 'none';
           document.getElementById('sessionRunning').style.display = 'block';
         } else alert('Please add the time you want to focus!');
@@ -91,10 +91,15 @@ function startSession (missions, comments, targetDuration) {
     targetDuration : targetDuration,
     missions : missions,
     comments : comments,
-    startingTimestamp : now
+    startingTimestamp : now,
   };
 
-  fetch('/startNewSession', {
+  if(document.getElementById('scheduledBoolean').innerText === 'scheduled'){
+    query.sessionID = localStorage.getItem('sessionID');
+    query.scheduled = true;
+  }
+
+  fetch('/startSession', {
   method: 'POST', 
   headers: {
     'Content-Type': 'application/json',
@@ -131,12 +136,17 @@ function startTimer (ms) {
   }
   obj.step = function () {
     obj.elapsedTime += 500;
-    var now = Math.max(0, ms-(new Date().getTime() - startTime)),
-    m = Math.floor(now/60000), s= Math.floor(now/1000)%60;
+    var now = Math.max(0, ms-(new Date().getTime() - startTime));
+    var h = Math.floor((now % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var m = Math.floor((now % (1000 * 60 * 60)) / (1000 * 60));
+    var s = Math.floor((now % (1000 * 60)) / 1000);
+    h = (h<10 ? "0" : "") + h;
     m = (m<10 ? "0" : "") + m;
     s = (s<10 ? "0" : "") + s;
-    display.innerHTML = m + ':' + s ;
-    document.title = ('Drip Work App - ' + m + ':' + s );
+    display.innerHTML = h + ':' + m + ':' + s ;
+    var timerInTab = document.getElementById('timerInTabBtn').checked;
+    if(timerInTab) document.title = ('Drip Work App - ' + h + ':' + m + ':' + s );
+    else document.title = ('Drip Work App')
     if (now == 0){
       clearInterval(timer);
       endSession();
@@ -167,6 +177,10 @@ document.getElementById('sessionResultsForm').addEventListener('submit', (e) => 
       feelingRating : formData.feelingRating,
       comments : formData.sessionComments,
       sessionID : sessionID
+    }
+
+    if(document.getElementById('scheduledBoolean').innerText === 'scheduled'){
+      query.scheduled = false
     }
   
     var sessionMissions = document.getElementsByClassName('missionRow');
@@ -251,7 +265,7 @@ function clearTimer () {
 
 function addMissionTag(newMission) {
   let li = document.createElement('li');
-  li.appendChild(document.createTextNode(mission));
+  li.appendChild(document.createTextNode(newMission));
   li.classList.add('missionLi');
   document.getElementById('sessionMissions').appendChild(li);
   document.getElementById('sessionMission').value = "";
@@ -271,26 +285,23 @@ function updateNewSession(data) {
   document.getElementById('newSessionDiv').style.display = 'block';
 
   document.getElementById('missionCommentsInput').innerText = data.comments;
+  document.getElementById('scheduledBoolean').innerText = 'scheduled'
 
   var duration = msToTime(data.targetDuration);
   document.getElementById('hoursInput').value = duration.hours;
   document.getElementById('minutesInput').value = duration.minutes;
   document.getElementById('secondsInput').value = duration.seconds;
   data.missions.forEach((mission) => {
-    addMissionTag(mission);
+    addMissionTag(mission.mission);
   })
 }
 
 function msToTime(duration) {
   var response = {};
-  var milliseconds = Math.floor((duration % 1000) / 100),
-    seconds = Math.floor((duration / 1000) % 60),
-    minutes = Math.floor((duration / (1000 * 60)) % 60),
-    hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
-
-  response.hours = (hours < 10) ? "0" + hours : hours;
-  response.minutes = (minutes < 10) ? "0" + minutes : minutes;
-  response.seconds = (seconds < 10) ? "0" + seconds : seconds;
+  var milliseconds = Math.floor((duration % 1000) / 100);
+  response.seconds = Math.floor((duration / 1000) % 60);
+  response.minutes = Math.floor((duration / (1000 * 60)) % 60);
+  response.hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
 
   return response
 }
