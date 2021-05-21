@@ -52,16 +52,6 @@ function addTopicTag() {
     document.getElementById('topicSelection').appendChild(radioFragment);
 }
 
-function addMissionTag() {
-    let newMission = document.getElementById('sessionMission').value;
-    let li = document.createElement('li');
-    li.appendChild(document.createTextNode(newMission));
-    li.classList.add('missionLi');
-    document.getElementById('sessionMissions').appendChild(li);
-    document.getElementById('sessionMission').value = "";
-    return newMission
-}
-
 function previewSession () {
     if (Date.parse(document.getElementById('sessionDate').value) < new Date()) return alert('Why do you want to schedule a session in the past?');
     document.getElementById('previewSessionBtn').style.display = 'none';
@@ -112,11 +102,36 @@ function getFormData () {
         if(radios[i].checked) formData.topic = radios[i].value;
     }
     var missions = [];
-    var missionsUl = document.getElementsByClassName('missionLi');
-    for (var i = 0; i<missionsUl.length ; i++){
-        missions.push({mission:missionsUl[i].innerHTML, completed:false})
+    var missionsTable = document.getElementById('sessionMissionsTable');
+    //THis is extremely dangerous code, if the table order gets changed it won't work.
+    for (var i = 0, row; row=missionsTable.rows[i] ; i++){
+      if(i>0) {
+        missions.push ({
+          mission : row.cells[0].innerText, 
+        })
+      }
     }
+
     formData.missions = missions;
     formData.comments = document.getElementById('scheduledSessionComments').value;
     return formData;
+}
+
+function addMissionTag() {
+    let newMission = document.getElementById('sessionMission').value;
+    if(newMission) {
+        var tableBody = document.getElementById('sessionMissionsTableBody');
+        var row = tableBody.insertRow(tableBody.length);
+        document.getElementById('sessionMission').value = "";
+        row.classList.add('missionRow');
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        cell2.addEventListener('click', () => {
+          if(confirm('Are you sure you want to delete this mission?')) row.remove()
+        })
+        cell1.innerHTML = newMission;
+        cell2.innerHTML = '<p>X</p>'
+        return newMission
+    } else alert('Please enter a mission that exists!')
+
 }

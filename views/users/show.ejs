@@ -9,41 +9,47 @@
 </head>
 <body>
     <h1>This is the page of <%=currentUser.username%>, who has drip worked for <%=userInfo.elapsedTimeWorking/1000%> seconds. The average score for them is <%=averageRating.toFixed(2)%></h1>
-    <table>
-        <thead>
-            <tr>
-                <td>Index</td>
-                <td>Date</td>
-                <td>Target (s)</td>
-                <td>Real (s)</td>
-                <td>Mission</td>
-                <td>Completion Rating</td>
-                <td>Comments of this Session</td>
-            </tr>
-        </thead>
-        <tbody>
-            <% userInfo.workSessions.reverse().forEach((session) => {%>
+   
+    <div id="userDisplayDiv">
+        <table>
+            <thead>
                 <tr>
-                    <td><%= session.index %></td>
-                    <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
-                    <td><%= session.targetDuration / 1000%></td>
-                    <td><%= session.realDuration / 1000 %></td>
-                    <td><span class='commentsSpan' data-id='<%=session._id%>' data-modal="modal-one" onclick='sessionMissions(this)'>Missions</span></td>
-                    <td><%= session.rating.toFixed(2) %></td>
-                    <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionComments(this)'>Comments</span></td>
+                    <td>Date</td>
+                    <td>Target (s)</td>
+                    <td>Real (s)</td>
+                    <td>Mission</td>
+                    <td>Completion Rating [0-10]</td>
+                    <td>Comments of this Session</td>
                 </tr>
-            <% }); %>
-        </tbody>
-    </table>
-    <a href="/">Landing Page</a>
-    <a href="/schedule">Schedule</a>
+            </thead>
+            <tbody>
+                <% userInfo.workSessions.reverse().forEach((session) => {%>
+                    <tr>
+                        <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
+                        <td><%= session.targetDuration / 1000%></td>
+                        <td><%= session.realDuration / 1000 %></td>
+                        <td><span class='commentsSpan' data-id='<%=session._id%>' data-modal="modal-one" onclick='sessionMissions(this)'>Missions</span></td>
+                        <td><%= session.rating %></td>
+                        <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionComments(this)'>Comments</span></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        <a href="/">Landing Page</a>
+        <a href="/schedule">Schedule</a>
+    </div>
 
     <div class="modal" id="modal-one">
         <div class="modal-bg modal-exit"></div>
         <div class="modal-container">
-          <h1>Session Missions:</h1>
-          <ul id='modalMissionsDisplay'>
-          </ul>
+          <p><strong>Welcome to this session's statistics:</strong></p>
+          <p><strong>Date: </strong><span id='modalMissionDate'></span></p>
+          <p><strong>Target Duration (s): </strong><span id='modalMissionTargetDuration'></span></p>
+          <p><strong>Real Duration (s): </strong><span id='modalMissionRealDuration'></span></p>
+          <p><strong>Completion Rating [0-10]: </strong><span id='modalMissionCompletionRating'></span></p>
+          <p><strong>After Comments: </strong><span id='modalAfterComments'></span></p>
+          <hr>
+          <ul id='modalMissionsDisplay'></ul>
           <button class="modal-close modal-exit">X</button>
         </div>
       </div>

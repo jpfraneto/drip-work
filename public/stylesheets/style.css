@@ -5,7 +5,7 @@ body {
 #sessionContainer {
     width: 88%;
     height: auto;
-    margin: 0 auto;
+    margin: 0 auto 22px auto; 
     border: solid black 2px;
     background-color: rgb(179, 239, 178);
     padding: 3px;
@@ -63,6 +63,10 @@ body {
 }
 
 #sessionResults {
+    display: none;
+}
+
+#sessionTopicForm {
     display: none;
 }
 
@@ -206,4 +210,18 @@ ul {
 
 #currentUserP {
     display: none;
+}
+
+#sessionMissionsAndObjectives {
+    display:none
+}
+
+#sessionCommentsTitle {
+    display: none;
+}
+
+#changeTopicBtn {
+    font-size: 0.8em;
+    color: blue;
+    cursor: pointer;
 }

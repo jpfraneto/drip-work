@@ -22,32 +22,32 @@
                     <p><strong>What topic are you going to work in?</strong></p>
                       
                     <div id="topicSelection">
-                        <div>
-                            <input type="radio" id="bookStudy" name="sessionTopic" value="Book Study">
-                            <label for="bookStudy">Book Study</label>
-                          </div>
-                          
-                          <div>
-                            <input type="radio" id="onlineCourse" name="sessionTopic" value="Online Course">
-                            <label for="onlineCourse">Online Course</label>
-                          </div>
-                          
-                          <div>
-                            <input type="radio" id="projectCreation" name="sessionTopic" value="Project Creation">
-                            <label for="projectCreation">Project Creation</label>
-                          </div>     
+                        <% userTopics.forEach((topic) => { %>
+                            <div>
+                                <input type="radio" id="<%=topic%>ID" name="sessionTopic" value="<%=topic%>">
+                                <label for="<%=topic%>ID"><%=topic%></label>
+                              </div>
+                        <% }); %>  
                     </div>
-                      <div>
+                      <!-- <div>
                           <label for="otherTopic">New Topic</label>
                           <input id='otherTopic' type="text">
                           <button id='addTopicBtn' type="button">Add</button>
-                      </div>
+                      </div> -->
                       <p><strong>Your missions for this session are:</strong></p>
                       <div>
-                          <ul id='sessionMissions'>
-    
-                          </ul>
+                        <table id='sessionMissionsTable'>
+                            <thead>
+                                <tr>
+                                    <td><strong>Mission</strong></td>
+                                    <td><strong></strong></td>
+                                </tr>
+                            </thead>
+                            <tbody id='sessionMissionsTableBody'>
+                            </tbody>
+                        </table>
                       </div>
+                      <br>
                     <label for="sessionMission">Session Mission</label>
                     <input id='sessionMission' type="text">
                     <button id='addMissionBtn' type="button">Add</button>

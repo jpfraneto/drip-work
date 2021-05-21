@@ -15,10 +15,30 @@
     <source src="/audio/ping.mp3" type='audio/mpeg'></audio>
     <p id='currentUserP'><%=currentUser.username%></p>
     
+
     <div id="sessionContainer">
+        <div id='sessionTopicForm'>
+            <p>What is the topic for the new session?</p>
+            <div id="topicSelection">
+                <% userTopics.forEach((topic) => { %>
+                    <div>
+                        <input type="radio" id="<%=topic%>ID" name="sessionTopic" value="<%=topic%>">
+                        <label for="<%=topic%>ID"><%=topic%></label>
+                      </div>
+                <% }); %>
+            </div>
+            <form action="" id='chooseTopicForm'>
+              <label for="newTopic">New Topic</label>
+              <input id='newTopic' type="text" name="newTopic">
+              <button id='addTopicBtn' type="button">Add</button><br><br>
+              <button type='submit' id='topicCreateNewSessionBtn'>Create a New Session</button>
+            </form>
+            <br>
+        </div>
+
         <div class='innerDiv' id='sessionCreation'>
-            <p>Welcome <%=currentUser.username%>, it is time to open the faucet.</p>
             <div id="landingDiv">
+                <p>Welcome <%=currentUser.username%>, it is time to open the faucet.</p>
                 <% if(scheduledSessions.length > 0){ %>
                     <p><strong>Your pending sessions are:</strong></p>
                     <ul id='scheduledSessionsUl'>
@@ -31,6 +51,7 @@
                 <button type='button' id='newSessionBtn'>Start New Session</button>
             </div>
             <div id="newSessionDiv">
+                <p>You are going to work in: <strong><span id='chosenTopicDisplay'></span></strong> <span id='changeTopicBtn'>Change Topic</span></p>
                 <form action="" id='sessionScheduleForm'>
                     <div class="timerDiv">
                         <div id="timeInputs">
@@ -45,9 +66,9 @@
                         <a id='clearTimerBtn' class='funcBtn'>Clear Timer</a>
                         <p id='targetTime'>Your session will end at <strong><span id='targetEndingTime'></span></strong></p>
                     </div>
+
                     <p><strong>Add missions to your <span id='scheduledBoolean'>new</span> session:</strong></p>
-                    <ul id='sessionMissions'>
-                    </ul>
+
                     <label for="sessionMission">New Mission:</label>
                     <input id='sessionMission' type="text">
                     <button id='addMissionBtn' type="button">Add</button>
@@ -58,8 +79,8 @@
                     <button type ='submit' id='startSessionBtn'>Start Session</button>
                     <a href=""><button type ='button'>Back</button></a> 
                 </form>
+                <br>
             </div>
-
         </div>
 
         <div class='innerDiv' id="sessionRunning">
@@ -74,18 +95,23 @@
 
             <div class="sessionObjectives">
                 <p><strong>The missions for this session are:</strong></p>
-                <table id='sessionMissionsTable'>
-                    <thead>
-                        <tr>
-                            <td><strong>Mission</strong></td>
-                            <td><strong>Comments</strong></td>
-                        </tr>
-                    </thead>
-                    <tbody id='sessionMissionsTableBody'>
-                    </tbody>
-                </table>
-                <p id='sessionComments'></p>
             </div>
+        </div>
+
+        <div id="sessionMissionsAndObjectives">
+            <table id='sessionMissionsTable'>
+                <thead>
+                    <tr>
+                        <td><strong>Mission</strong></td>
+                        <td><strong>Comments</strong></td>
+                        <td><strong></strong></td>
+                    </tr>
+                </thead>
+                <tbody id='sessionMissionsTableBody'>
+                </tbody>
+            </table>
+            <p id='sessionCommentsTitle'><strong>Comments for this session:</strong></p>
+            <p id='sessionComments'></p>
         </div>
 
         <div class='innerDiv' id="sessionClosing">

@@ -1,78 +1,135 @@
 window.onload = () => {
-    document.getElementById('addMissionBtn').addEventListener('click', addMission);
-    document.getElementById('setTimerBtn').addEventListener('click', setTargetEndingTime)
-    document.getElementById('clearTimerBtn').addEventListener('click', clearTimer);
+  document.getElementById('addMissionBtn').addEventListener('click', addMission);
+  document.getElementById('setTimerBtn').addEventListener('click', setTargetEndingTime)
+  document.getElementById('clearTimerBtn').addEventListener('click', clearTimer);
 
-    var listOfSessions = document.getElementById('scheduledSessionsUl');
-    if(listOfSessions){
-      listOfSessions.addEventListener('click', e => {
-        const sessionID = e.target.getAttribute('data-sessionID');
-        fetch('/getSessionInformation', {
-          method: 'POST', 
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({sessionID: sessionID}),
-          })
-          .then(response => response.json())
-          .then(data => {
-            localStorage.setItem('sessionID', sessionID);
-            updateNewSession(data.queriedSession);
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-          });
-      })
+  document.getElementById('changeTopicBtn').addEventListener('click', () => {
+    document.getElementById('chosenTopicDisplay').innerText = "";
+    document.getElementById('sessionTopicForm').style.display = 'block';
+    document.getElementById('sessionCreation').style.display = 'none';
+    document.getElementById('newSessionDiv').style.display = 'none';
+    document.getElementById('sessionMissionsAndObjectives').style.display = 'none'
+  })
+
+  var listOfSessions = document.getElementById('scheduledSessionsUl');
+  if(listOfSessions){
+    listOfSessions.addEventListener('click', e => {
+      const sessionID = e.target.getAttribute('data-sessionID');
+      fetch('/getSessionInformation', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({sessionID: sessionID}),
+        })
+        .then(response => response.json())
+        .then(data => {
+          localStorage.setItem('sessionID', sessionID);
+          updateNewSession(data.queriedSession);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    })
+  }
+
+  document.getElementById('newSessionBtn').addEventListener('click', () => {
+    document.getElementById('landingDiv').style.display = 'none';
+    document.getElementById('sessionTopicForm').style.display = 'block';
+  })
+
+  document.getElementById('chooseTopicForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    var radios = document.getElementsByName('sessionTopic');
+    var chosenTopic;
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+      if (radios[i].checked) {
+        chosenTopic = radios[i].value;
+        break;
+      }
     }
 
-    document.getElementById('newSessionBtn').addEventListener('click', () => {
-      document.getElementById('landingDiv').style.display = 'none';
-      document.getElementById('newSessionDiv').style.display = 'block';
-    })
+    document.getElementById('chosenTopicDisplay').innerText = chosenTopic;
+    document.getElementById('sessionTopicForm').style.display = 'none';
+    document.getElementById('sessionCreation').style.display = 'block';
+    document.getElementById('newSessionDiv').style.display = 'block';
+    document.getElementById('sessionMissionsAndObjectives').style.display = 'block'
 
-    document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        let formData = getFormData(document.getElementById('sessionScheduleForm'));
-        let hours = formData.hours || 0;
-        let minutes = formData.minutes || 0;
-        let seconds = formData.seconds || 0;
-        var totalMiliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
-        hours   = (hours   < 10 ? "0" : "") + hours;
-        minutes = (minutes < 10 ? "0" : "") + minutes;
-        seconds = (seconds < 10 ? "0" : "") + seconds;
+  })
 
-        var missions = [];
-        var missionsUl = document.getElementsByClassName('missionLi');
-        for (var i = 0; i<missionsUl.length ; i++){
-            missions.push({mission:missionsUl[i].innerHTML, completed:false})
+  document.getElementById('addTopicBtn').addEventListener('click', (e) => {
+    var radios = document.getElementsByName('sessionTopic');
+    var chosenTopic;
+
+    for (var i = 0, length = radios.length; i < length; i++) {
+      if (radios[i].checked) {
+        chosenTopic = radios[i].value;
+        break;
+      }
+    }
+    fetch('/addTopicToUser', {
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({newTopic: chosenTopic}),
+      })
+      .then(response => response.json())
+      .then(data => {
+        let newTopic = document.getElementById('newTopic').value;
+        document.getElementById('newTopic').value = "";
+        var radioHtml = '<input type="radio" name="sessionTopic" id="' + newTopic + 'Radio" value="' + newTopic +'" checked="checked" />';
+        var radioLabel = '<label for="' + newTopic + 'Radio">'+ newTopic+ '</label>'
+        var radioFragment = document.createElement('div');
+        radioFragment.innerHTML = radioHtml + radioLabel;
+        document.getElementById('topicSelection').appendChild(radioFragment);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+  })
+
+  document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      let formData = getFormData(document.getElementById('sessionScheduleForm'));
+      let hours = formData.hours || 0;
+      let minutes = formData.minutes || 0;
+      let seconds = formData.seconds || 0;
+      var totalMiliseconds = hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000;
+      hours   = (hours   < 10 ? "0" : "") + hours;
+      minutes = (minutes < 10 ? "0" : "") + minutes;
+      seconds = (seconds < 10 ? "0" : "") + seconds;
+
+      var missions = [];
+      var missionsTable = document.getElementById('sessionMissionsTable');
+      //THis is extremely dangerous code, if the table order gets changed it won't work.
+      for (var i = 0, row; row=missionsTable.rows[i] ; i++){
+        if(i>0) {
+          missions.push ({
+            mission : row.cells[0].innerText, 
+            missionComments : row.cells[1].innerText, 
+            completed : false
+          })
         }
+        row.deleteCell(2);
+      }
 
-        let comments = formData.comments;
+      let comments = formData.comments;
 
-        if (totalMiliseconds > 0) {
-          startSession(missions, comments, totalMiliseconds);
-          document.getElementById('clock').innerHTML = hours + ":" + minutes + ":" + seconds;
-          document.getElementById('sessionCreation').style.display = 'none';
-          document.getElementById('sessionRunning').style.display = 'block';
-        } else alert('Please add the time you want to focus!');
-    });
+      if (totalMiliseconds > 0) {
+        startSession(missions, comments, totalMiliseconds);
+        document.getElementById('clock').innerHTML = hours + ":" + minutes + ":" + seconds;
+        document.getElementById('sessionCreation').style.display = 'none';
+        document.getElementById('sessionRunning').style.display = 'block';
+        document.getElementById('sessionCommentsTitle').style.display = 'block';
+      } else alert('Please add the time you want to focus!');
+  });
 }
 
 function startSession (missions, comments, targetDuration) {
   document.getElementById('sessionComments').innerText = comments;
-
-  missions.reverse().forEach((missionObj)=>{
-    var tableBody = document.getElementById('sessionMissionsTableBody');
-    var row = tableBody.insertRow(0);
-    row.classList.add('missionRow');
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    cell1.addEventListener('click', ()=>{
-      cell1.classList.toggle("completed");
-    })
-    cell1.innerHTML = missionObj.mission;
-    cell2.innerHTML = '<span contenteditable="true">Comment</span>'
-  })
 
   var timerObj = startTimer(targetDuration);
   var now = new Date().getTime();
@@ -85,8 +142,10 @@ function startSession (missions, comments, targetDuration) {
   });
 
   var currentUser = document.getElementById('currentUserP').innerText;
+  var sessionTopic = document.getElementById('chosenTopicDisplay').innerText;
 
   var query = {
+    sessionTopic : sessionTopic,
     username : currentUser,
     targetDuration : targetDuration,
     missions : missions,
@@ -162,6 +221,7 @@ function endSession () {
   audio.play();
   document.getElementById('sessionRunning').style.display = 'none';
   document.getElementById('sessionClosing').style.display = 'block';
+  document.getElementById('sessionMissionsAndObjectives').style.display = 'none';
 }
 
 document.getElementById('sessionResultsForm').addEventListener('submit', (e) => {
@@ -264,17 +324,29 @@ function clearTimer () {
 }
 
 function addMissionTag(newMission) {
-  let li = document.createElement('li');
-  li.appendChild(document.createTextNode(newMission));
-  li.classList.add('missionLi');
-  document.getElementById('sessionMissions').appendChild(li);
-  document.getElementById('sessionMission').value = "";
+
+    var tableBody = document.getElementById('sessionMissionsTableBody');
+    var row = tableBody.insertRow(tableBody.length);
+    row.classList.add('missionRow');
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    cell1.addEventListener('click', ()=> {
+      cell1.classList.toggle("completed");
+    })
+    cell3.addEventListener('click', () => {
+      if(confirm('Are you sure you want to delete this mission?')) row.remove()
+    })
+    cell1.innerHTML = newMission;
+    cell2.innerHTML = '<span contenteditable="true">Comment</span>'
+    cell3.innerHTML = '<p>X</p>'
 }
 
 function addMission() {
   let newMission = document.getElementById('sessionMission').value;
   if(newMission) {
     addMissionTag(newMission);
+    document.getElementById('sessionMission').value = "";
   } else {
     alert('Please enter a new mission!')
   }
@@ -294,6 +366,7 @@ function updateNewSession(data) {
   data.missions.forEach((mission) => {
     addMissionTag(mission.mission);
   })
+  document.getElementById('sessionMissionsAndObjectives').style.display = 'block';
 }
 
 function msToTime(duration) {

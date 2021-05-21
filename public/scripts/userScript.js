@@ -16,7 +16,7 @@ function sessionComments (element) {
 }
 
 function sessionMissions (element) {
-  fetch('/getSessionMissions', {
+  fetch('/getSessionInformation', {
     method: 'POST', 
     headers: {
       'Content-Type': 'application/json',
@@ -25,9 +25,14 @@ function sessionMissions (element) {
     })
     .then(response => response.json())
     .then(data => {
-      if (data.sessionMissions) {
-        data.sessionMissions.forEach((mission) => {
-          addMissionToModal(mission)
+      if (data) {
+        document.getElementById('modalMissionDate').innerText = new Date(data.queriedSession.realStartingTimestamp).toDateString();
+        document.getElementById('modalMissionTargetDuration').innerText = data.queriedSession.targetDuration/1000;
+        document.getElementById('modalMissionRealDuration').innerText = data.queriedSession.realDuration/1000;
+        document.getElementById('modalMissionCompletionRating').innerText = data.queriedSession.rating;
+        document.getElementById('modalAfterComments').innerText = data.queriedSession.afterStats.afterComments;
+        data.queriedSession.missions.forEach((mission) => {
+          addMissionToModal(mission);
         })
       }
     })
@@ -56,6 +61,6 @@ modals.forEach(function(trigger) {
 
 function addMissionToModal(mission) {
   let li = document.createElement('li');
-  li.innerHTML = '<p><strong>Misión :</strong>'+ mission.mission + ' <br> <strong>Comentarios:</strong> '+ mission.missionComments + ' <br> <strong>Fue completada? </strong>' + mission.completed +'</p> <hr>';
+  li.innerHTML = '<p><strong>Mission: </strong>'+ mission.mission + ' <br> <strong>Comments:</strong> '+ mission.missionComments + ' <br> <strong>Completed? </strong>' + mission.completed +'</p> <hr>';
   document.getElementById('modalMissionsDisplay').appendChild(li);
 }

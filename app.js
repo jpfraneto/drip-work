@@ -64,9 +64,8 @@ app.get('/', (req, res) => {
     if(req.user) {
         User.findOne({username : req.user.username}).populate('workSessions')
         .then((thisUser) => {
-            console.log(thisUser);
             let scheduledSessions = thisUser.workSessions.filter(x => x.scheduled);
-            res.render('index', {scheduledSessions : scheduledSessions})
+            res.render('index', {scheduledSessions : scheduledSessions, userTopics: thisUser.topics})
         })
     }
     else res.redirect('login');
@@ -107,6 +106,7 @@ app.get('/users/:username', async (req, res) => {
             if(req.params.username === req.user.username){
                 var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
                 var finishedSessions = thisUser.workSessions.filter(x => !x.scheduled)
+                console.log(thisUser);
                 res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
             } else {
                 res.redirect('/login');
@@ -137,9 +137,9 @@ app.post('/startSession', (req, res) => {
                 scheduled : false,
                 missions : req.body.missions,
                 comments : req.body.comments,
+                topic : sessionTopic,
                 realStartingTimestamp : req.body.startingTimestamp
             });
-            console.log('newSession', newSession);
             newSession.save();
             thisUser.workSessions.push(newSession);
             thisUser.save();
@@ -164,7 +164,9 @@ app.post('/endSession', (req, res) => {
         thisSession.afterStats.afterComments = req.body.comments;
         if(!req.body.scheduled) thisSession.scheduled = false;
         thisSession.rating = calculateSessionRating(thisSession.afterStats.feelingRating, thisSession.targetDuration, thisSession.realDuration)
-        thisSession.save(()=>{
+        thisSession.save(() => {
+            console.log('The session that was just saved to the DB is:')
+            console.log(thisSession);
             res.json({message:'The session was saved in your profile. Keep it going!'})
             if(req.user){
                 User.findById(req.user._id)
@@ -184,22 +186,33 @@ app.post('/getSessionComment', (req, res) => {
     })
 })
 
-app.post('/getSessionMissions', (req, res) => {
-    WorkSession.findById(req.body.sessionID)
-    .then((queriedSession) => {
-        res.json({sessionMissions : queriedSession.missions})
-    })
+app.post('/addTopicToUser', (req, res) => {
+    console.log('in here')
+    console.log(req.body);
+    User.findOne({username:req.user.username})
+    .then((thisUser) => {
+        thisUser.topics.push(req.body.newTopic);
+        thisUser.save(()=>{
+            console.log('the user was updated with the new topic: ', req.body.newTopic);
+            res.json({message:'The topic was successfully added to the user'});
+        })
+    });
 })
 
 app.post('/getSessionInformation', (req, res) => {
     WorkSession.findById(req.body.sessionID)
     .then((queriedSession) => {
-        res.json({queriedSession})
+        console.log('inside here', queriedSession);
+        res.json({queriedSession});
     })
 })
 
 app.get('/schedule', (req, res) => {
-    if(req.user) res.render('schedule');
+    if(req.user) 
+    User.findOne({username:req.user.username})
+    .then((thisUser) => {
+        res.render('schedule', {userTopics : thisUser.topics});
+    });
     else res.redirect('login');
 })
 
@@ -209,6 +222,7 @@ app.post('/schedule', (req, res) => {
         let newSession = new WorkSession({
             targetDuration : req.body.targetDuration,
             scheduled : true,
+            topic : 'saltar (AGREGAR REQ.BODY.TOPIC EN EL SCHEDULE ROUTE!!!)',
             missions : req.body.missions,
             comments : req.body.comments,
             scheduledStartingDate : req.body.date
@@ -227,5 +241,5 @@ app.listen(port, () => {
 
 function calculateSessionRating(feelingRating, targetDuration, realDuration){
     if(targetDuration<realDuration) return 0,1*(feelingRating*3/100);
-    return (0,1*((feelingRating*3/100) + (realDuration*7/targetDuration)))
+    return (0,1*((feelingRating*3/100) + (realDuration*7/targetDuration))).toFixed(2);
 }
