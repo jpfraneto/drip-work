@@ -137,7 +137,7 @@ app.post('/startSession', (req, res) => {
                 scheduled : false,
                 missions : req.body.missions,
                 comments : req.body.comments,
-                topic : sessionTopic,
+                topic : req.body.sessionTopic,
                 realStartingTimestamp : req.body.startingTimestamp
             });
             newSession.save();
@@ -187,7 +187,7 @@ app.post('/getSessionComment', (req, res) => {
 })
 
 app.post('/addTopicToUser', (req, res) => {
-    console.log('in here')
+    console.log('in here');
     console.log(req.body);
     User.findOne({username:req.user.username})
     .then((thisUser) => {
@@ -202,7 +202,6 @@ app.post('/addTopicToUser', (req, res) => {
 app.post('/getSessionInformation', (req, res) => {
     WorkSession.findById(req.body.sessionID)
     .then((queriedSession) => {
-        console.log('inside here', queriedSession);
         res.json({queriedSession});
     })
 })
@@ -211,6 +210,7 @@ app.get('/schedule', (req, res) => {
     if(req.user) 
     User.findOne({username:req.user.username})
     .then((thisUser) => {
+        console.log(thisUser);
         res.render('schedule', {userTopics : thisUser.topics});
     });
     else res.redirect('login');
@@ -222,7 +222,7 @@ app.post('/schedule', (req, res) => {
         let newSession = new WorkSession({
             targetDuration : req.body.targetDuration,
             scheduled : true,
-            topic : 'saltar (AGREGAR REQ.BODY.TOPIC EN EL SCHEDULE ROUTE!!!)',
+            topic : req.body.topic,
             missions : req.body.missions,
             comments : req.body.comments,
             scheduledStartingDate : req.body.date

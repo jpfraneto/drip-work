@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="topNavbar">
-        <h1>Drip Work</h1>
+        <a href="/"><h1>Drip Work</h1></a>
     </div>
     <audio hidden id='finishAudio'>
     <source src="/audio/ping.mp3" type='audio/mpeg'></audio>
@@ -27,11 +27,12 @@
                       </div>
                 <% }); %>
             </div>
+            <br>
             <form action="" id='chooseTopicForm'>
               <label for="newTopic">New Topic</label>
               <input id='newTopic' type="text" name="newTopic">
               <button id='addTopicBtn' type="button">Add</button><br><br>
-              <button type='submit' id='topicCreateNewSessionBtn'>Create a New Session</button>
+              <button type='submit' id='topicCreateNewSessionBtn'>Start a new session</button>
             </form>
             <br>
         </div>
@@ -43,7 +44,7 @@
                     <p><strong>Your pending sessions are:</strong></p>
                     <ul id='scheduledSessionsUl'>
                         <% for (var i = 0; i<scheduledSessions.length ; i++) { %>
-                            <li data-sessionID="<%=scheduledSessions[i]._id%>"><%=scheduledSessions[i].scheduledStartingDate.toDateString()%> - <%=scheduledSessions[i].missions.length%> Missions</li>
+                            <li data-sessionID="<%=scheduledSessions[i]._id%>"><strong><%=scheduledSessions[i].topic%></strong> - <%=scheduledSessions[i].scheduledStartingDate.toDateString()%> - <%=scheduledSessions[i].missions.length%> Missions</li>
                         <% } %>
                     </ul>
                 <% } %>
@@ -84,6 +85,7 @@
         </div>
 
         <div class='innerDiv' id="sessionRunning">
+            <p>You are working in: <strong><span id='runningChosenTopicDisplay'></span></strong></p>
             <div class="sessionClockDiv">
                 <h1 id='clock'></h1>
                 <a id='pauseSessionBtn' class='funcBtn'>Pause</a>
@@ -91,6 +93,8 @@
                 <a id='stopSessionBtn' class='funcBtn'>End Session</a><br>
                 <label for="timerInTabBtn">Do you want to see the timer in the tab?</label>
                 <input type="checkbox" id='timerInTabBtn'>
+                <div id="musicDiv">
+                </div>
             </div>
 
             <div class="sessionObjectives">

@@ -26,6 +26,8 @@ function sessionMissions (element) {
     .then(response => response.json())
     .then(data => {
       if (data) {
+        document.getElementById('modalSessionTopic').innerText = data.queriedSession.topic;
+        document.getElementById('sessionBeforeComments').innerText = data.queriedSession.comments;
         document.getElementById('modalMissionDate').innerText = new Date(data.queriedSession.realStartingTimestamp).toDateString();
         document.getElementById('modalMissionTargetDuration').innerText = data.queriedSession.targetDuration/1000;
         document.getElementById('modalMissionRealDuration').innerText = data.queriedSession.realDuration/1000;

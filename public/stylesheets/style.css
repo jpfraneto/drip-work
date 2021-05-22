@@ -30,6 +30,10 @@ body {
     padding: 0;
     text-align: center;
 }
+.topNavbar a {
+    text-decoration: none;
+    color: black
+}
 
 .bottomNavbar {
     overflow: hidden;
@@ -214,6 +218,16 @@ ul {
 
 #sessionMissionsAndObjectives {
     display:none
+}
+
+#sessionMissionsTable {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+#sessionMissionsTable td{
+    width: 50%;
 }
 
 #sessionCommentsTitle {

@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/schedule.css">
     <title>Drip Work App</title>
 </head>
 <body>
@@ -13,42 +14,41 @@
     </div>
     <div class="sessionContainer">
         <div class="innerDiv">
-            <form action="/scheduleSessions" id="scheduleSessionForm" onkeydown="return event.key != 'Enter';">
+            <div id='sessionTopicForm'>
+                <p><strong>What is the topic for the session you want to schedule?</strong></p>
+                <div id="topicSelection">
+                    <% userTopics.forEach((topic) => { %>
+                        <div>
+                            <input type="radio" id="<%=topic%>ID" name="sessionTopic" value="<%=topic%>">
+                            <label for="<%=topic%>ID"><%=topic%></label>
+                          </div>
+                    <% }); %>
+                </div>
+                <br>
+                <form action="" id='chooseTopicForm'>
+                  <label for="newTopic">New Topic</label>
+                  <input id='newTopic' type="text" name="newTopic">
+                  <button id='addTopicBtn' type="button">Add</button><br><br>
+                  <button type='submit' id='topicCreateNewSessionBtn'>Schedule new session</button>
+                </form>
+                <br>
+            </div>
+            <form id="scheduleSessionForm" onkeydown="return event.key != 'Enter';">
                 <h1>Schedule a New Session</h1>
+                <p>You are going to work in: <strong><span id='chosenTopicDisplay'></span></strong> <span id='changeTopicBtn'>Change Topic</span></p>
                 <div id="sessionScheduleDiv">
                     <label for="sessionDate">Session Date: </label>
                     <input id='sessionDate' name='sessionDate' type="date"><br>
-    
-                    <p><strong>What topic are you going to work in?</strong></p>
-                      
-                    <div id="topicSelection">
-                        <% userTopics.forEach((topic) => { %>
-                            <div>
-                                <input type="radio" id="<%=topic%>ID" name="sessionTopic" value="<%=topic%>">
-                                <label for="<%=topic%>ID"><%=topic%></label>
-                              </div>
-                        <% }); %>  
-                    </div>
-                      <!-- <div>
-                          <label for="otherTopic">New Topic</label>
-                          <input id='otherTopic' type="text">
-                          <button id='addTopicBtn' type="button">Add</button>
-                      </div> -->
+
                       <p><strong>Your missions for this session are:</strong></p>
                       <div>
                         <table id='sessionMissionsTable'>
-                            <thead>
-                                <tr>
-                                    <td><strong>Mission</strong></td>
-                                    <td><strong></strong></td>
-                                </tr>
-                            </thead>
                             <tbody id='sessionMissionsTableBody'>
                             </tbody>
                         </table>
                       </div>
                       <br>
-                    <label for="sessionMission">Session Mission</label>
+                    <label for="sessionMission">New Mission</label>
                     <input id='sessionMission' type="text">
                     <button id='addMissionBtn' type="button">Add</button>
                     <br>
@@ -66,7 +66,7 @@
                     <p>This is the session you are about to schedule:</p>
                     <p><strong id='sessionDatePreview'>12 May 2021</strong></p>
                     <p>Target Duration: <span id='sessionTargetDuration'>00:88:88</span></p>
-                    <p>Topic: <span id='scheduledSessionTopic'></span></p>
+                    <p><strong>Topic: </strong><span id='scheduledSessionTopic'></span></p>
                     <p><strong>Missions for this session:</strong></p>
                     <ul id='scheduledSessionMissions'>
                     </ul>

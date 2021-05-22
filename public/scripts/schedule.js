@@ -8,9 +8,11 @@ window.onload = () => {
         e.preventDefault();
         let formData = getFormData();
 
+        var topic = document.getElementById('chosenTopicDisplay').innerText;
+        console.log(topic)
         var query = {
             date : formData.date,
-            topic : formData.topic,
+            topic : topic,
             missions : formData.missions,
             comments : formData.comments,
             targetDuration : formData.totalMiliseconds
@@ -44,13 +46,36 @@ function addTopic () {
 }
 
 function addTopicTag() {
-    let newTopic = document.getElementById('otherTopic').value;
-    var radioHtml = '<input id="'+newTopic+'" type="radio" name="sessionTopic" checked="checked"/>';
+    let newTopic = document.getElementById('newTopic').value;
+    document.getElementById('newTopic').value = "";
+    var radioHtml = '<input id="'+newTopic+'" type="radio" name="sessionTopic" value="'+ newTopic + '" checked="checked"/>';
     var labelHtml = '<label for="'+newTopic+'">'+ newTopic+'</label>'
     var radioFragment = document.createElement('div');
     radioFragment.innerHTML = radioHtml + " " + labelHtml;
     document.getElementById('topicSelection').appendChild(radioFragment);
 }
+
+document.getElementById('chooseTopicForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    var chosenTopic = document.querySelector('input[name="sessionTopic"]:checked').value;
+
+    if(chosenTopic) {
+        console.log(chosenTopic);
+        document.getElementById('chosenTopicDisplay').innerText = chosenTopic;
+        document.getElementById('sessionTopicForm').style.display = 'none';
+        document.getElementById('scheduleSessionForm').style.display = 'block';
+    } else {
+        alert('If you want to get work done, it is important to define what you are going to work in!')
+    }
+  })
+
+document.getElementById('changeTopicBtn').addEventListener('click', () => {
+    document.getElementById('chosenTopicDisplay').innerText = "";
+    document.getElementById('sessionTopicForm').style.display = 'block';
+    document.getElementById('scheduleSessionForm').style.display = 'none';
+
+})
 
 function previewSession () {
     if (Date.parse(document.getElementById('sessionDate').value) < new Date()) return alert('Why do you want to schedule a session in the past?');
@@ -105,11 +130,9 @@ function getFormData () {
     var missionsTable = document.getElementById('sessionMissionsTable');
     //THis is extremely dangerous code, if the table order gets changed it won't work.
     for (var i = 0, row; row=missionsTable.rows[i] ; i++){
-      if(i>0) {
         missions.push ({
-          mission : row.cells[0].innerText, 
-        })
-      }
+          mission : row.cells[0].innerText
+        });
     }
 
     formData.missions = missions;
@@ -130,7 +153,8 @@ function addMissionTag() {
           if(confirm('Are you sure you want to delete this mission?')) row.remove()
         })
         cell1.innerHTML = newMission;
-        cell2.innerHTML = '<p>X</p>'
+        cell2.innerHTML = '<p class="deleteMission">🗑️</p>'
+        cell2.classList.add('deleteMissionCell')
         return newMission
     } else alert('Please enter a mission that exists!')
 

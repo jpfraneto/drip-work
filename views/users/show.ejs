@@ -14,6 +14,7 @@
         <table>
             <thead>
                 <tr>
+                    <td>Topic</td>
                     <td>Date</td>
                     <td>Target (s)</td>
                     <td>Real (s)</td>
@@ -25,6 +26,7 @@
             <tbody>
                 <% userInfo.workSessions.reverse().forEach((session) => {%>
                     <tr>
+                        <td><%= session.topic %></td>
                         <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
                         <td><%= session.targetDuration / 1000%></td>
                         <td><%= session.realDuration / 1000 %></td>
@@ -42,15 +44,25 @@
     <div class="modal" id="modal-one">
         <div class="modal-bg modal-exit"></div>
         <div class="modal-container">
-          <p><strong>Welcome to this session's statistics:</strong></p>
+          <h3>Welcome to this session's statistics</h3>
+          <p><strong>Topic: </strong><span id='modalSessionTopic'></span></p>
           <p><strong>Date: </strong><span id='modalMissionDate'></span></p>
           <p><strong>Target Duration (s): </strong><span id='modalMissionTargetDuration'></span></p>
           <p><strong>Real Duration (s): </strong><span id='modalMissionRealDuration'></span></p>
           <p><strong>Completion Rating [0-10]: </strong><span id='modalMissionCompletionRating'></span></p>
-          <p><strong>After Comments: </strong><span id='modalAfterComments'></span></p>
           <hr>
-          <ul id='modalMissionsDisplay'></ul>
+          <h3>Comments (Before Starting):</h3>
+          <p id='sessionBeforeComments'></p>
+          <hr>
+          <div id="sessionMissionsDiv">
+            <h3>Missions for this session:</h3>
+            <ul id='modalMissionsDisplay'></ul>
+          </div>
           <button class="modal-close modal-exit">X</button>
+          <ul id='modalMissionsDisplay'></ul>
+          <hr>
+          <p><strong>After Comments: </strong><span id='modalAfterComments'></span></p>
+          <button class="modal-exit">Close</button>
         </div>
       </div>
 

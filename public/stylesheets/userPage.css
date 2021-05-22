@@ -65,9 +65,10 @@ thead {
     transition: all 1s ease;
     top: 0;
     left: 0;
-    display: flex;
+    display: block;
     align-items: center;
     justify-content: center;
+    overflow-y: scroll;
 }
 .open {
     visibility: visible;
@@ -83,6 +84,7 @@ thead {
 }
 
 .modal-container {
+    margin: 8px 88px 88px 88px;
     border-radius: 10px;
     background: #fff;
     position: relative;
@@ -104,9 +106,19 @@ thead {
 
 ul {
     list-style-type: none;
-    padding-left: 0;
 }
 
 #userDisplayDiv {
     margin-bottom: 33px;
+}
+
+#modalMissionsDisplay {
+    width: 88%;
+    word-wrap: break-word;
+    text-align: center;
+}
+
+#sessionMissionsDiv {
+    border: 1px solid black;
+    background-color: olivedrab;
 }

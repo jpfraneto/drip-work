@@ -52,6 +52,7 @@ window.onload = () => {
     }
 
     document.getElementById('chosenTopicDisplay').innerText = chosenTopic;
+    document.getElementById('runningChosenTopicDisplay').innerText = chosenTopic;
     document.getElementById('sessionTopicForm').style.display = 'none';
     document.getElementById('sessionCreation').style.display = 'block';
     document.getElementById('newSessionDiv').style.display = 'block';
@@ -59,26 +60,19 @@ window.onload = () => {
 
   })
 
-  document.getElementById('addTopicBtn').addEventListener('click', (e) => {
-    var radios = document.getElementsByName('sessionTopic');
-    var chosenTopic;
+  document.getElementById('addTopicBtn').addEventListener('click', () => {
 
-    for (var i = 0, length = radios.length; i < length; i++) {
-      if (radios[i].checked) {
-        chosenTopic = radios[i].value;
-        break;
-      }
-    }
+    let newTopic = document.getElementById('newTopic').value;
+
     fetch('/addTopicToUser', {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({newTopic: chosenTopic}),
+      body: JSON.stringify({newTopic: newTopic}),
       })
       .then(response => response.json())
       .then(data => {
-        let newTopic = document.getElementById('newTopic').value;
         document.getElementById('newTopic').value = "";
         var radioHtml = '<input type="radio" name="sessionTopic" id="' + newTopic + 'Radio" value="' + newTopic +'" checked="checked" />';
         var radioLabel = '<label for="' + newTopic + 'Radio">'+ newTopic+ '</label>'
@@ -358,6 +352,7 @@ function updateNewSession(data) {
 
   document.getElementById('missionCommentsInput').innerText = data.comments;
   document.getElementById('scheduledBoolean').innerText = 'scheduled'
+  document.getElementById('chosenTopicDisplay').innerText = data.topic;
 
   var duration = msToTime(data.targetDuration);
   document.getElementById('hoursInput').value = duration.hours;

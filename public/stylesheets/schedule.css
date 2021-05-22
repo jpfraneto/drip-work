@@ -1,0 +1,29 @@
+#sessionTopicForm {
+    display: block;
+    text-align: center;
+}
+
+#scheduleSessionForm {
+    display: none;
+}
+
+.deleteMission {
+    width: fit-content;
+    cursor: pointer;
+}
+
+#sessionMissionsTable {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+td {
+    width: auto;
+}
+
+.deleteMissionCell {
+    width: 20px;
+    position: relative;
+    right: 0;
+}
