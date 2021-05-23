@@ -226,10 +226,6 @@ ul {
     width: 100%;
   }
 
-#sessionMissionsTable td{
-    width: 50%;
-}
-
 #sessionCommentsTitle {
     display: none;
 }
@@ -238,4 +234,10 @@ ul {
     font-size: 0.8em;
     color: blue;
     cursor: pointer;
+}
+
+.deleteMissionCell {
+    width: 20px;
+    position: relative;
+    right: 0;
 }

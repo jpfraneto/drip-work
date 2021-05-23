@@ -107,7 +107,7 @@ app.get('/users/:username', async (req, res) => {
                 var averageRating = thisUser.workSessions.reduce((acc, val) => acc + val.rating, 0) / thisUser.workSessions.length;
                 var finishedSessions = thisUser.workSessions.filter(x => !x.scheduled)
                 console.log(thisUser);
-                res.render('users/show', {userInfo : thisUser, averageRating : averageRating});
+                res.render('users/show', {userInfo : thisUser, averageRating : averageRating, userTopics : thisUser.topics});
             } else {
                 res.redirect('/login');
             }
@@ -115,6 +115,18 @@ app.get('/users/:username', async (req, res) => {
     } else {
         res.redirect('/login');
     }
+})
+
+app.post('/getSessionsByTopic', (req, res) => {
+    User.findOne({username:req.user.username}).populate('workSessions')
+    .then((foundUser) => {
+        if(req.body.fetchedTopic !== "All"){
+            let sessionsByTopic = foundUser.workSessions.filter(x => x.topic === req.body.fetchedTopic);
+            res.json(sessionsByTopic);
+        } else {
+            res.json(foundUser.workSessions)
+        }
+    })
 })
 
 app.post('/startSession', (req, res) => {

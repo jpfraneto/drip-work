@@ -8,8 +8,28 @@
     <title>Drip Work - <%=currentUser.username%></title>
 </head>
 <body>
-    <h1>This is the page of <%=currentUser.username%>, who has drip worked for <%=userInfo.elapsedTimeWorking/1000%> seconds. The average score for them is <%=averageRating.toFixed(2)%></h1>
-   
+    <h1 id='userPageTitle' data-elapsed-time-working="<%=userInfo.elapsedTimeWorking%>">This is the page of <%=currentUser.username%></h1>
+    <h4>Congratulations, you have worked for: <%=userInfo.workSessions.length%> sessions</h4>
+    <label for="workedTimeDisplay">Total Elapsed Time Working [in <span id='displayTimeUnit'>Hours</span>]: <span id='elapsedTimeWorking'><%=(userInfo.elapsedTimeWorking/3600000).toFixed(2)%></span></label>
+
+    <select name="workedTimeDisplay" id="workedTimeDisplay">
+      <option value="Days">Days</option>
+      <option selected value="Hours">Hours</option>
+      <option value="Minutes">Minutes</option>
+      <option value="Seconds">Seconds</option>
+    </select>
+    <br>
+    <label for="topicDisplaySelection">Topic You Want To Be Shown:</label>
+
+    <select name="topicDisplaySelection" id="topicDisplaySelection">
+      <% userTopics.forEach ((topic) => { %>
+        <option value=<%=topic%>+ "Topic"><%=topic%></option>
+      <% }); %>
+      <option value="Caminar">Caminar</option>
+      <option value="Saltar">Saltar</option>
+      <option value="All">All Sessions</option>
+    </select>
+    <br><br>
     <div id="userDisplayDiv">
         <table>
             <thead>
@@ -18,23 +38,11 @@
                     <td>Date</td>
                     <td>Target (s)</td>
                     <td>Real (s)</td>
-                    <td>Mission</td>
                     <td>Completion Rating [0-10]</td>
-                    <td>Comments of this Session</td>
+                    <td>Details</td>
                 </tr>
             </thead>
-            <tbody>
-                <% userInfo.workSessions.reverse().forEach((session) => {%>
-                    <tr>
-                        <td><%= session.topic %></td>
-                        <td><%= Intl.DateTimeFormat('en-GB', { year: 'numeric', month: 'long', day: '2-digit'}).format(session.realStartingTimestamp) %></td>
-                        <td><%= session.targetDuration / 1000%></td>
-                        <td><%= session.realDuration / 1000 %></td>
-                        <td><span class='commentsSpan' data-id='<%=session._id%>' data-modal="modal-one" onclick='sessionMissions(this)'>Missions</span></td>
-                        <td><%= session.rating %></td>
-                        <td><span class='commentsSpan' data-id='<%=session._id%>' onclick='sessionComments(this)'>Comments</span></td>
-                    </tr>
-                <% }); %>
+            <tbody id='sessionsDisplayTableBody'>
             </tbody>
         </table>
         <a href="/">Landing Page</a>
@@ -62,11 +70,12 @@
           <ul id='modalMissionsDisplay'></ul>
           <hr>
           <p><strong>After Comments: </strong><span id='modalAfterComments'></span></p>
-          <button class="modal-exit">Close</button>
+          <button id='closeModalBtn' class="modal-exit">Close</button>
         </div>
       </div>
 
     <div class="bottomNavbar">
+        <a href="/">Landing</a>
         <% if(!currentUser){ %>
             <a href="/login">Login</a>
             <a href="/register">Register</a>

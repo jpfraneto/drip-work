@@ -9,7 +9,6 @@ window.onload = () => {
         let formData = getFormData();
 
         var topic = document.getElementById('chosenTopicDisplay').innerText;
-        console.log(topic)
         var query = {
             date : formData.date,
             topic : topic,
@@ -42,11 +41,30 @@ function addMission() {
 }
 
 function addTopic () {
-    addTopicTag();
+    let newTopic = document.getElementById('newTopic').value;
+
+    if(newTopic){
+      fetch('/addTopicToUser', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({newTopic: newTopic}),
+        })
+        .then(response => response.json())
+        .then(data => {
+          addTopicTag(newTopic);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    } else {
+      alert('Please add a new topic!')
+    }
+
 }
 
-function addTopicTag() {
-    let newTopic = document.getElementById('newTopic').value;
+function addTopicTag(newTopic) {
     document.getElementById('newTopic').value = "";
     var radioHtml = '<input id="'+newTopic+'" type="radio" name="sessionTopic" value="'+ newTopic + '" checked="checked"/>';
     var labelHtml = '<label for="'+newTopic+'">'+ newTopic+'</label>'
@@ -105,13 +123,14 @@ function updateSessionPreview () {
     formData.missions.forEach((mission) => {
         let li = document.createElement('li');
         li.appendChild(document.createTextNode(mission.mission));
+        li.classList.add('scheduledSessionMissionLi')
         document.getElementById('scheduledSessionMissions').appendChild(li);
     })
 }
 
 function getFormData () {
     let formData = {};
-    formData.date = 86400000 + Date.parse(document.getElementById('sessionDate').value);
+    formData.date = Date.parse(document.getElementById('sessionDate').value);
     if(formData.date < new Date()) return alert('Why do you want to schedule a session in the past?');
     var radios = document.getElementsByName('sessionTopic');
     let hours = document.getElementById('hoursInput').value;

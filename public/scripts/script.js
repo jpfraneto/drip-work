@@ -64,25 +64,30 @@ window.onload = () => {
 
     let newTopic = document.getElementById('newTopic').value;
 
-    fetch('/addTopicToUser', {
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({newTopic: newTopic}),
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('newTopic').value = "";
-        var radioHtml = '<input type="radio" name="sessionTopic" id="' + newTopic + 'Radio" value="' + newTopic +'" checked="checked" />';
-        var radioLabel = '<label for="' + newTopic + 'Radio">'+ newTopic+ '</label>'
-        var radioFragment = document.createElement('div');
-        radioFragment.innerHTML = radioHtml + radioLabel;
-        document.getElementById('topicSelection').appendChild(radioFragment);
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-      });
+    if(newTopic){
+      fetch('/addTopicToUser', {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({newTopic: newTopic}),
+        })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('newTopic').value = "";
+          var radioHtml = '<input type="radio" name="sessionTopic" id="' + newTopic + 'Radio" value="' + newTopic +'" checked="checked" />';
+          var radioLabel = '<label for="' + newTopic + 'Radio">'+ newTopic+ '</label>'
+          var radioFragment = document.createElement('div');
+          radioFragment.innerHTML = radioHtml + radioLabel;
+          document.getElementById('topicSelection').appendChild(radioFragment);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    } else {
+      alert('Please add a new topic!')
+    }
+   
   })
 
   document.getElementById('sessionScheduleForm').addEventListener('submit', (e) => {
@@ -333,7 +338,8 @@ function addMissionTag(newMission) {
     })
     cell1.innerHTML = newMission;
     cell2.innerHTML = '<span contenteditable="true">Comment</span>'
-    cell3.innerHTML = '<p>X</p>'
+    cell3.innerHTML = '<p class="deleteMission">🗑️</p>'
+    cell3.classList.add('deleteMissionCell')
 }
 
 function addMission() {
@@ -353,6 +359,8 @@ function updateNewSession(data) {
   document.getElementById('missionCommentsInput').innerText = data.comments;
   document.getElementById('scheduledBoolean').innerText = 'scheduled'
   document.getElementById('chosenTopicDisplay').innerText = data.topic;
+  document.getElementById('runningChosenTopicDisplay').innerText = data.topic;
+
 
   var duration = msToTime(data.targetDuration);
   document.getElementById('hoursInput').value = duration.hours;
