@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/style.css">
     <link rel="stylesheet" href="/stylesheets/schedule.css">
-    <title>Drip Work App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap" rel="stylesheet">
+    <title>Drip Work</title>
 </head>
 <body>
-    <div class="topNavbar">
-        <h1>Drip Work</h1>
+    <div class="headerBanner">
+        <h1><a id="headerTitle" href="/">DRIP WORK</a></h1>
+        <p><a href="/users/<%=currentUser.username%>"><span id='currentUser'>@<%=currentUser.username%></span></a><a href="/schedule"><span>Schedule Session</span></a><a href="/logout"><span>Logout</span></a></p>
     </div>
     <div class="sessionContainer">
         <div class="innerDiv">

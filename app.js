@@ -11,6 +11,7 @@ const session        = require('express-session');
 const User           = require('./models/user.js');
 const flash          = require('connect-flash');
 const WorkSession        = require('./models/workSession.js');
+const MusicRecommendation= require('./models/musicRecommendation.js')
 
 mongoose.connect(process.env.DATABASE_URL, {
     useNewUrlParser: true, 
@@ -171,9 +172,10 @@ app.post('/endSession', (req, res) => {
                 }
             }
         })
-        thisSession.realDuration = req.body.sessionDuration;
+        thisSession.comments = req.body.sessionComments;
+        thisSession.realDuration = Math.min(thisSession.targetDuration, req.body.sessionDuration);
         thisSession.afterStats.feelingRating = req.body.feelingRating;
-        thisSession.afterStats.afterComments = req.body.comments;
+        thisSession.afterStats.afterComments = req.body.afterSessionComments;
         if(!req.body.scheduled) thisSession.scheduled = false;
         thisSession.rating = calculateSessionRating(thisSession.afterStats.feelingRating, thisSession.targetDuration, thisSession.realDuration)
         thisSession.save(() => {
@@ -244,6 +246,28 @@ app.post('/schedule', (req, res) => {
         thisUser.save();
         res.json({message:'Your new session was scheduled'});
     });
+})
+
+app.get('/addmusic', (req, res) => {
+    if(req.user.username === 'jpfraneto'){
+        res.render('addmusic')
+    } else {
+        console.log('you are not admitted here!');
+        res.redirect('/');
+    }
+})
+
+app.post('/addMusic', (req, res) => {
+    if(req.body.youtubeID.length === 11) {
+        let newMusic = new MusicRecommendation({youtubeID:req.body.youtubeID})
+        newMusic.save(()=>{
+            console.log('The video with the following youtubeID was saved to the DB: ', req.body.youtubeID);
+            res.redirect('/');
+        })
+    } else {
+        console.log('That is not a valid youtube id!');
+        res.redirect('/');
+    }
 })
 
 const port = process.env.PORT || 3000;

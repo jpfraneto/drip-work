@@ -1,6 +1,7 @@
 body {
-    background-color:rgb(122, 158, 126);
+    background-color:black;
     text-align: center;
+    color: white;
 }
 
 table {
@@ -13,48 +14,11 @@ table td {
     border: solid 1px black;
 }
 
-a {
-    margin: 0 auto;
-    display: inline-block;
-    width: 115px;
-    height: 25px;
-    background:rgb(179, 239, 178);
-    padding: 10px;
-    text-align: center;
-    border-radius: 5px;
-    color: black;
-    font-weight: bold;
-    line-height: 25px;
-}
-
 thead {
     font-weight: bold;
     text-align: center;
 }
 
-.commentsSpan {
-    color: blue;
-    cursor: pointer;
-}
-
-.bottomNavbar {
-    overflow: hidden;
-    background-color: rgb(179, 239, 178);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-}
-
-.bottomNavbar a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  padding: 0 33px;
-  text-decoration: none;
-  font-size: 33px;
-}
 
 .modal {
     position: fixed;
@@ -78,7 +42,7 @@ thead {
 
 .modal-bg {
     position: absolute;
-    background: rgb(122, 158, 126);
+    background: black;
     width: 100%;
     height: 100%;
 }
@@ -87,6 +51,7 @@ thead {
     margin: 8px 88px 88px 88px;
     border-radius: 10px;
     background: #fff;
+    color: black;
     position: relative;
     padding: 30px;
 }
@@ -120,9 +85,43 @@ ul {
 
 #sessionMissionsDiv {
     border: 1px solid black;
-    background-color: olivedrab;
+    background-color: rgba(6, 6, 7, 0.482);
 }
 
 #userDisplayDiv {
+    display: none;
+}
+
+.headerBanner{
+    background-color: black;
+    text-align: center;
+    flex: 0 1 auto;
+    color: rgba(177, 172, 172, 0.685);
+    text-decoration: none;
+}
+
+.headerBanner span {
+    margin: 0 22px;
+    font-size: 1.5em;
+    color: cyan;
+}
+
+.headerBanner a {
+    text-decoration: none;
+}
+
+.headerBanner span:hover {
+    text-shadow: 0 0 20px #0aafe6, 0 0 20px rgba(10, 175, 230, 0);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#headerTitle{
+    font-family: 'Roboto Mono', monospace;    
+    color: rgb(39, 95, 160) !important;
+    text-decoration: none;
+}
+
+#selectedTopicTimeDisplay {
     display: none;
 }

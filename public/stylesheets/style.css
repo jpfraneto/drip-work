@@ -1,5 +1,6 @@
 body {
-    background-color: rgb(122, 158, 126);
+    background-color: black;
+    color: white
 }
 
 #sessionContainer {
@@ -7,7 +8,7 @@ body {
     height: auto;
     margin: 0 auto 22px auto; 
     border: solid black 2px;
-    background-color: rgb(179, 239, 178);
+    background-color: black;
     padding: 3px;
     position: relative;
     text-align: center;
@@ -16,7 +17,7 @@ body {
 
 .authForm {
     border: solid black 2px;
-    background-color: rgb(179, 239, 178);
+    background-color: black;
     padding: 3px;
     display: inline-block;
     text-align: right;
@@ -185,8 +186,8 @@ textarea {
     text-align: center;
 }
 
-.completed {
-    text-decoration: line-through;
+.completedRow {
+    background-color: rgb(71, 120, 23);
 }
 
 table {
@@ -232,7 +233,7 @@ ul {
 
 #changeTopicBtn {
     font-size: 0.8em;
-    color: blue;
+    color: coral;
     cursor: pointer;
 }
 
@@ -240,4 +241,34 @@ ul {
     width: 20px;
     position: relative;
     right: 0;
+}
+
+.headerBanner{
+    background-color: black;
+    text-align: center;
+    flex: 0 1 auto;
+    color: rgba(177, 172, 172, 0.685);
+    text-decoration: none;
+}
+
+.headerBanner span {
+    margin: 0 22px;
+    font-size: 1.5em;
+    color: cyan;
+}
+
+.headerBanner a {
+    text-decoration: none;
+}
+
+.headerBanner span:hover {
+    text-shadow: 0 0 20px #0aafe6, 0 0 20px rgba(10, 175, 230, 0);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#headerTitle{
+    font-family: 'Roboto Mono', monospace;    
+    color: rgb(39, 95, 160) !important;
+    text-decoration: none;
 }

@@ -101,23 +101,22 @@ window.onload = () => {
       minutes = (minutes < 10 ? "0" : "") + minutes;
       seconds = (seconds < 10 ? "0" : "") + seconds;
 
-      var missions = [];
-      var missionsTable = document.getElementById('sessionMissionsTable');
-      //THis is extremely dangerous code, if the table order gets changed it won't work.
-      for (var i = 0, row; row=missionsTable.rows[i] ; i++){
-        if(i>0) {
-          missions.push ({
-            mission : row.cells[0].innerText, 
-            missionComments : row.cells[1].innerText, 
-            completed : false
-          })
+      if (totalMiliseconds > 0) {
+        var missions = [];
+        var missionsTable = document.getElementById('sessionMissionsTable');
+        //THis is extremely dangerous code, if the table order gets changed it won't work.
+        for (var i = 0, row; row=missionsTable.rows[i] ; i++){
+          if(i>0) {
+            missions.push ({
+              mission : row.cells[0].innerText, 
+              missionComments : row.cells[1].innerText, 
+              completed : false
+            })
+          }
+          row.deleteCell(3);
         }
-        row.deleteCell(2);
-      }
 
       let comments = formData.comments;
-
-      if (totalMiliseconds > 0) {
         startSession(missions, comments, totalMiliseconds);
         document.getElementById('clock').innerHTML = hours + ":" + minutes + ":" + seconds;
         document.getElementById('sessionCreation').style.display = 'none';
@@ -206,6 +205,7 @@ function startTimer (ms) {
     if(timerInTab) document.title = ('Drip Work App - ' + h + ':' + m + ':' + s );
     else document.title = ('Drip Work App')
     if (now == 0){
+      localStorage.setItem('elapsedTime', obj.elapsedTime);
       clearInterval(timer);
       endSession();
     }
@@ -220,7 +220,7 @@ function endSession () {
   audio.play();
   document.getElementById('sessionRunning').style.display = 'none';
   document.getElementById('sessionClosing').style.display = 'block';
-  document.getElementById('sessionMissionsAndObjectives').style.display = 'none';
+  // document.getElementById('sessionMissionsAndObjectives').style.display = 'none';
 }
 
 document.getElementById('sessionResultsForm').addEventListener('submit', (e) => {
@@ -228,13 +228,15 @@ document.getElementById('sessionResultsForm').addEventListener('submit', (e) => 
   let sessionID = localStorage.getItem('sessionID');
   let sessionDuration = Math.round(localStorage.getItem('elapsedTime'));
   let formData = getFormData(document.getElementById('sessionResultsForm'));
+  let sessionComments = document.getElementById('sessionComments').innerText;
 
   if (formData.feelingRating > 0) {
 
     var query = {
       sessionDuration : sessionDuration,
       feelingRating : formData.feelingRating,
-      comments : formData.sessionComments,
+      sessionComments : sessionComments,
+      afterSessionComments : formData.afterSessionComments,
       sessionID : sessionID
     }
 
@@ -272,6 +274,7 @@ function saveSessionToDB (query) {
     .then(data => {
       document.getElementById('resultsMessage').innerText = data.message;
       document.getElementById('sessionClosing').style.display = 'none';
+      document.getElementById('sessionMissionsAndObjectives').style.display = 'none';
       document.getElementById('sessionResults').style.display = 'block';
       document.title = ('Drip Work App - Session Complete');
     })
@@ -330,16 +333,22 @@ function addMissionTag(newMission) {
     var cell1 = row.insertCell(0);
     var cell2 = row.insertCell(1);
     var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
     cell1.addEventListener('click', ()=> {
       cell1.classList.toggle("completed");
     })
-    cell3.addEventListener('click', () => {
+    cell4.addEventListener('click', () => {
       if(confirm('Are you sure you want to delete this mission?')) row.remove()
     })
     cell1.innerHTML = newMission;
-    cell2.innerHTML = '<span contenteditable="true">Comment</span>'
-    cell3.innerHTML = '<p class="deleteMission">🗑️</p>'
-    cell3.classList.add('deleteMissionCell')
+    cell2.innerHTML = '<span contenteditable="true">Add Comments Here</span>'
+    cell4.innerHTML = '<p class="deleteMission">🗑️</p>'
+    cell4.classList.add('deleteMissionCell')
+    cell3.innerHTML = 'Completed?';
+    cell3.addEventListener('click', ()=> {
+      cell1.classList.toggle("completed");
+      row.classList.toggle("completedRow");
+    })
 }
 
 function addMission() {

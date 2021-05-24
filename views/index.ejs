@@ -5,11 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/style.css">
-    <title>Drip Work App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap" rel="stylesheet">
+    <title>Drip Work</title>
 </head>
 <body>
-    <div class="topNavbar">
-        <a href="/"><h1>Drip Work</h1></a>
+    <div class="headerBanner">
+        <h1><a id="headerTitle" href="/">DRIP WORK</a></h1>
+        <p><a href="/users/<%=currentUser.username%>"><span id='currentUser'>@<%=currentUser.username%></span></a><a href="/schedule"><span>Schedule Session</span></a><a href="/logout"><span>Logout</span></a></p>
     </div>
     <audio hidden id='finishAudio'>
     <source src="/audio/ping.mp3" type='audio/mpeg'></audio>
@@ -97,17 +99,19 @@
                 </div>
             </div>
 
-            <div class="sessionObjectives">
-                <p><strong>The missions for this session are:</strong></p>
-            </div>
+            
         </div>
 
         <div id="sessionMissionsAndObjectives">
+            <div class="sessionObjectives">
+                <p><strong>This are the missions for this session:</strong></p>
+            </div>
             <table id='sessionMissionsTable'>
                 <thead>
                     <tr>
                         <td><strong>Mission</strong></td>
                         <td><strong>Comments</strong></td>
+                        <td><strong>Completed?</strong></td>
                         <td><strong></strong></td>
                     </tr>
                 </thead>
@@ -115,16 +119,17 @@
                 </tbody>
             </table>
             <p id='sessionCommentsTitle'><strong>Comments for this session:</strong></p>
-            <p id='sessionComments'></p>
+            <p id='sessionComments' contenteditable="true"></p>
         </div>
 
         <div class='innerDiv' id="sessionClosing">
-            <p><strong>The session is over! Here you can close it:</strong></p>
+            <hr>
+            <p><strong>Here you can close the session that just ended:</strong></p>
             <form id='sessionResultsForm' method="POST" action="/endSession">
                 <label for="feelingRating">Feeling Rating (From 0 to 100)</label>
                 <input id='feelingRating' name='feelingRating' type="number" min="0" max="100"><br>
-                <label for="sessionComments"><strong>Comments</strong></label>
-                <textarea name="sessionComments" id="sessionComments"></textarea><br>
+                <label for="afterSessionComments"><strong>Comments</strong></label>
+                <textarea name="afterSessionComments" id="afterSessionComments"></textarea><br>
                 <button type="submit">Close Session!</button>
             </form>
         </div>
@@ -140,16 +145,6 @@
 
     </div>
     <br>
-
-<div class="bottomNavbar">
-    <% if(!currentUser){ %>
-        <a href="/login">Login</a>
-        <a href="/register">Register</a>
-    <% } else { %>
-        <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
-        <a href="/logout">Logout</a>
-    <% } %>
-</div>
 
     <script src='scripts/script.js'></script>
 </body>

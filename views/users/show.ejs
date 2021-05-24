@@ -5,10 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/stylesheets/userPage.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100&display=swap" rel="stylesheet">
     <title>Drip Work - <%=currentUser.username%></title>
 </head>
 <body>
-    <h1 id='userPageTitle' data-elapsed-time-working="<%=userInfo.elapsedTimeWorking%>">This is the page of <%=currentUser.username%></h1>
+    <div class="headerBanner">
+      <h1><a id="headerTitle" href="/">DRIP WORK</a></h1>
+      <p><a href="/users/<%=currentUser.username%>"><span id='currentUser'>@<%=currentUser.username%></span></a><a href="/schedule"><span>Schedule Session</span></a><a href="/logout"><span>Logout</span></a></p>
+  </div>
+
+
+    <h1 id='userPageTitle' data-elapsed-time-working="<%=userInfo.elapsedTimeWorking%>">This is the page of @<%=currentUser.username%></h1>
     <h4>Congratulations, you have worked for: <%=userInfo.workSessions.length%> sessions</h4>
     <label for="workedTimeDisplay">Total Elapsed Time Working [in <span id='displayTimeUnit'>Hours</span>]: <span id='elapsedTimeWorking'><%=(userInfo.elapsedTimeWorking/3600000).toFixed(2)%></span></label>
 
@@ -22,13 +29,13 @@
     <label for="topicDisplaySelection">Topic You Want To Be Shown:</label>
 
     <select name="topicDisplaySelection" id="topicDisplaySelection">
+      <option >Choose Display Topic</option>
       <% userTopics.forEach ((topic) => { %>
         <option value=<%=topic%>+ "Topic"><%=topic%></option>
       <% }); %>
-      <option value="Caminar">Caminar</option>
-      <option value="Saltar">Saltar</option>
-      <option value="All">All Sessions</option>
+      <option value="All">All Topics</option>
     </select>
+    <p id='selectedTopicTimeDisplay'>In the selected topic you have worked for: <span id='workingTimeInThisTopic'></span> <span id='topicTimeDisplayUnit'>minutes</span> in <span id='topicAmountOfSessions'></span> sessions</p>
     <br><br>
     <div id="userDisplayDiv">
         <table>
@@ -45,8 +52,6 @@
             <tbody id='sessionsDisplayTableBody'>
             </tbody>
         </table>
-        <a href="/">Landing Page</a>
-        <a href="/schedule">Schedule</a>
     </div>
 
     <div class="modal" id="modal-one">
@@ -66,24 +71,13 @@
             <h3>Missions for this session:</h3>
             <ul id='modalMissionsDisplay'></ul>
           </div>
-          <button class="modal-close modal-exit">X</button>
+          <button id='modalXClose' class="modal-close modal-exit">X</button>
           <ul id='modalMissionsDisplay'></ul>
           <hr>
           <p><strong>After Comments: </strong><span id='modalAfterComments'></span></p>
           <button id='closeModalBtn' class="modal-exit">Close</button>
         </div>
       </div>
-
-    <div class="bottomNavbar">
-        <a href="/">Landing</a>
-        <% if(!currentUser){ %>
-            <a href="/login">Login</a>
-            <a href="/register">Register</a>
-        <% } else { %>
-            <a href="/users/<%=currentUser.username%>"><span id='currentUser'><%=currentUser.username%></span></a>
-            <a href="/logout">Logout</a>
-        <% } %>
-    </div>
 
     <script src='/scripts/userScript.js'></script>
 </body>

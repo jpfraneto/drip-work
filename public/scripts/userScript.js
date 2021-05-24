@@ -47,6 +47,11 @@ function sessionMissions (elementID) {
           modal.classList.remove('open');
         })
 
+        document.getElementById('modalXClose').addEventListener('click', function(event) {
+          document.getElementById('modalMissionsDisplay').innerHTML = "";
+          modal.classList.remove('open');
+        })
+
         document.getElementById('modalSessionTopic').innerText = data.queriedSession.topic;
         document.getElementById('sessionBeforeComments').innerText = data.queriedSession.comments;
         document.getElementById('modalMissionDate').innerText = new Date(data.queriedSession.realStartingTimestamp).toDateString();
@@ -107,7 +112,7 @@ function loadSessionsFromTopic (topic) {
     .then(response => response.json())
     .then(queriedSessions => {
       if(queriedSessions.length > 0) populateSessionsDisplayTable(queriedSessions);
-      else alert('Oops, this topic does not have any finished session');
+      else alert('Oops, there are no finished sessions here');
     })
     .catch((error) => {
       console.error('Error:', error);
@@ -117,10 +122,13 @@ function loadSessionsFromTopic (topic) {
 function populateSessionsDisplayTable(queriedSessions) {
   document.getElementById('userDisplayDiv').style.display = 'block';
   var tableBody = document.getElementById('sessionsDisplayTableBody');
+  document.getElementById('selectedTopicTimeDisplay').style.display = 'block';
   tableBody.innerHTML = "";
+  document.getElementById('topicAmountOfSessions').innerText = queriedSessions.length;
+  var topicElapsedTime = 0;
 
   var row, topicCell, dateCell, targetTimeCell, realTimeCell, completionRatingCell, detailsCell;
-  queriedSessions.forEach((session) => {
+  queriedSessions.reverse().forEach((session) => {
     row = tableBody.insertRow(tableBody.length);
     topicCell = row.insertCell(0);
     dateCell = row.insertCell(1);
@@ -133,10 +141,12 @@ function populateSessionsDisplayTable(queriedSessions) {
     dateCell.innerHTML = session.realStartingTimestamp;
     targetTimeCell.innerHTML = session.targetDuration / 1000;
     realTimeCell.innerHTML = session.realDuration / 1000;
+    topicElapsedTime += session.realDuration/(60*1000);
     completionRatingCell.innerHTML = session.rating;
     detailsCell.innerText = 'Details'
     detailsCell.addEventListener('click', ()=>{
       sessionMissions(session._id);
     })
   })
+  document.getElementById('workingTimeInThisTopic').innerText = topicElapsedTime.toFixed(2);
 }
