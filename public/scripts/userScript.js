@@ -111,6 +111,8 @@ function loadSessionsFromTopic (topic) {
     })
     .then(response => response.json())
     .then(queriedSessions => {
+      queriedSessions = queriedSessions.filter(session => !session.scheduled)
+      console.log('queried sessions', queriedSessions);
       if(queriedSessions.length > 0) populateSessionsDisplayTable(queriedSessions);
       else alert('Oops, there are no finished sessions here');
     })
